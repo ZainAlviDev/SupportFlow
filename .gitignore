@@ -1,0 +1,33 @@
+# Build
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# .NET
+*.user
+*.suo
+.vs/
+launchSettings.local.json
+
+# Node (future web/)
+node_modules/
+.next/
+dist/
+.turbo/
+
+# Env
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+*.swp
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Docker
+docker-data/
