@@ -1,0 +1,195 @@
+# Staging deployment — pulls app images from GHCR.
+# Replace GITHUB_ORG before use, or export: export GITHUB_ORG=your-org
+#
+# Usage:
+#   export GITHUB_ORG=your-org
+#   export IMAGE_TAG=staging_env1
+#   docker compose -f docker-compose.staging.yml pull
+#   docker compose -f docker-compose.staging.yml up -d
+
+name: supportflow-staging
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: supportflow-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: supportflow
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d supportflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: supportflow-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: supportflow-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    restart: unless-stopped
+
+  identity:
+    image: ghcr.io/${GITHUB_ORG:-your-org}/supportflow/identity:${IMAGE_TAG:-staging_env1}
+    container_name: supportflow-identity
+    environment:
+      ASPNETCORE_ENVIRONMENT: Staging
+      ASPNETCORE_URLS: http://+:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  workspace:
+    image: ghcr.io/${GITHUB_ORG:-your-org}/supportflow/workspace:${IMAGE_TAG:-staging_env1}
+    container_name: supportflow-workspace
+    environment:
+      ASPNETCORE_ENVIRONMENT: Staging
+      ASPNETCORE_URLS: http://+:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  conversation:
+    image: ghcr.io/${GITHUB_ORG:-your-org}/supportflow/conversation:${IMAGE_TAG:-staging_env1}
+    container_name: supportflow-conversation
+    environment:
+      ASPNETCORE_ENVIRONMENT: Staging
+      ASPNETCORE_URLS: http://+:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  ticket:
+    image: ghcr.io/${GITHUB_ORG:-your-org}/supportflow/ticket:${IMAGE_TAG:-staging_env1}
+    container_name: supportflow-ticket
+    environment:
+      ASPNETCORE_ENVIRONMENT: Staging
+      ASPNETCORE_URLS: http://+:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  customer:
+    image: ghcr.io/${GITHUB_ORG:-your-org}/supportflow/customer:${IMAGE_TAG:-staging_env1}
+    container_name: supportflow-customer
+    environment:
+      ASPNETCORE_ENVIRONMENT: Staging
+      ASPNETCORE_URLS: http://+:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  knowledge:
+    image: ghcr.io/${GITHUB_ORG:-your-org}/supportflow/knowledge:${IMAGE_TAG:-staging_env1}
+    container_name: supportflow-knowledge
+    environment:
+      ASPNETCORE_ENVIRONMENT: Staging
+      ASPNETCORE_URLS: http://+:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  ai:
+    image: ghcr.io/${GITHUB_ORG:-your-org}/supportflow/ai:${IMAGE_TAG:-staging_env1}
+    container_name: supportflow-ai
+    environment:
+      ASPNETCORE_ENVIRONMENT: Staging
+      ASPNETCORE_URLS: http://+:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  notification:
+    image: ghcr.io/${GITHUB_ORG:-your-org}/supportflow/notification:${IMAGE_TAG:-staging_env1}
+    container_name: supportflow-notification
+    environment:
+      ASPNETCORE_ENVIRONMENT: Staging
+      ASPNETCORE_URLS: http://+:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  gateway:
+    image: ghcr.io/${GITHUB_ORG:-your-org}/supportflow/gateway:${IMAGE_TAG:-staging_env1}
+    container_name: supportflow-gateway
+    ports:
+      - "5000:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Staging
+      ASPNETCORE_URLS: http://+:8080
+      Services__Identity: http://identity:8080
+      Services__Workspace: http://workspace:8080
+      Services__Conversation: http://conversation:8080
+      Services__Ticket: http://ticket:8080
+      Services__Customer: http://customer:8080
+      Services__Knowledge: http://knowledge:8080
+      Services__AI: http://ai:8080
+      Services__Notification: http://notification:8080
+      ReverseProxy__Clusters__identity-cluster__Destinations__identity__Address: http://identity:8080/
+      ReverseProxy__Clusters__workspace-cluster__Destinations__workspace__Address: http://workspace:8080/
+      ReverseProxy__Clusters__conversation-cluster__Destinations__conversation__Address: http://conversation:8080/
+      ReverseProxy__Clusters__ticket-cluster__Destinations__ticket__Address: http://ticket:8080/
+      ReverseProxy__Clusters__customer-cluster__Destinations__customer__Address: http://customer:8080/
+      ReverseProxy__Clusters__knowledge-cluster__Destinations__knowledge__Address: http://knowledge:8080/
+      ReverseProxy__Clusters__ai-cluster__Destinations__ai__Address: http://ai:8080/
+      ReverseProxy__Clusters__notification-cluster__Destinations__notification__Address: http://notification:8080/
+    depends_on:
+      - identity
+      - workspace
+      - conversation
+      - ticket
+      - customer
+      - knowledge
+      - ai
+      - notification
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
