@@ -71,21 +71,34 @@ Default setup uses only `GITHUB_TOKEN`. Use `GHCR_PAT` only if pushing to a diff
 
 ---
 
-## D) Branch protection (optional)
+## D) Branch strategy (SupportFlow)
 
-- Require PR before merge into `dev` and `staging`
-- Workflow runs **after merge**, not on direct push
-- Create branches on GitHub if missing:
-  - `dev` — integration (may differ from local `DEV`; names are case-sensitive)
-  - `staging` — QA / pre-production
+**Default branch:** Set to `dev` (Settings → General → Default branch).  
+You do not need to merge to `master` for CI/CD.
 
 **Deploy flow:**
 
-| Event | Image tags pushed |
-|-------|-------------------|
-| PR merged to `dev` | `:dev` |
-| PR merged to `staging` | `:staging_env1` and `:staging_env2` |
-| Manual run (other branch) | `:<branch-name>` |
+| PR merge target | Workflow runs? | Image tags |
+|-----------------|----------------|------------|
+| `dev` | Yes | `:dev` |
+| `staging` | Yes | `:staging_env1`, `:staging_env2` |
+| `master` | **No** | — |
+| Direct push | **No** | — |
+
+**Typical flow:**
+
+```
+feature branch (Zain_Dev, Maryam_Dev, …)
+        │
+        ▼  PR merge
+       dev          → builds :dev images
+        │
+        ▼  PR merge
+     staging        → builds :staging_env1 + :staging_env2
+```
+
+**Why dev → master PR did not run Actions:**  
+The workflow only listens for PRs merged **into** `dev` or `staging`, not `master`.
 
 ---
 
