@@ -1,0 +1,50 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Gateway (:5000)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "Backend: Build all",
+      "program": "${workspaceFolder}/src/Gateway/SupportFlow.Gateway/bin/Debug/net8.0/SupportFlow.Gateway.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Gateway/SupportFlow.Gateway",
+      "stopAtEntry": false,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Identity API (:5010)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "Backend: Build all",
+      "program": "${workspaceFolder}/src/Services/Identity/SupportFlow.Identity.Api/bin/Debug/net8.0/SupportFlow.Identity.Api.dll",
+      "cwd": "${workspaceFolder}/src/Services/Identity/SupportFlow.Identity.Api",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Workspace API (:5020)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "Backend: Build all",
+      "program": "${workspaceFolder}/src/Services/Workspace/SupportFlow.Workspace.Api/bin/Debug/net8.0/SupportFlow.Workspace.Api.dll",
+      "cwd": "${workspaceFolder}/src/Services/Workspace/SupportFlow.Workspace.Api",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Conversation API (:5030)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "Backend: Build all",
+      "program": "${workspaceFolder}/src/Services/Conversation/SupportFlow.Conversation.Api/bin/Debug/net8.0/SupportFlow.Conversation.Api.dll",
+      "cwd": "${workspaceFolder}/src/Services/Conversation/SupportFlow.Conversation.Api",
+      "console": "integratedTerminal"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Backend: Gateway + Identity",
+      "configurations": ["Gateway (:5000)", "Identity API (:5010)"],
+      "stopAll": true
+    }
+  ]
+}

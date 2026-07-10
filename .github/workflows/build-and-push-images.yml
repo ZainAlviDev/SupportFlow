@@ -1,8 +1,16 @@
 name: Build and Push Images
 
 # Builds gateway + 8 microservice images and pushes to GHCR.
-# Triggers: merged PR to dev/staging, or manual workflow_dispatch.
-# Does NOT run on direct push to branches.
+#
+# WHEN IT RUNS:
+#   - PR merged INTO dev     → pushes :dev tags
+#   - PR merged INTO staging → pushes :staging_env1 and :staging_env2 tags
+#   - Manual: Actions → Run workflow
+#
+# WHEN IT DOES NOT RUN:
+#   - PR merged into master (or any branch other than dev/staging)
+#   - Direct push to dev/staging (no PR merge)
+#   - PR closed without merge
 
 on:
   pull_request:

@@ -1,0 +1,20 @@
+{
+  "name": "supportflow-web",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "dev:dashboard": "turbo dev --filter=@supportflow/dashboard",
+    "dev:widget": "turbo dev --filter=@supportflow/widget"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.4",
+    "typescript": "^5.8.3"
+  },
+  "packageManager": "npm@10.9.0"
+}

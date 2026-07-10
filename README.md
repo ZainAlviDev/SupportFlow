@@ -97,7 +97,16 @@ dotnet run --project src/Services/Identity/SupportFlow.Identity.Api
 .\scripts\run-all.ps1
 ```
 
-#### 4. EF migrations (without Redis)
+#### 4. Run frontend (Next.js dashboard)
+
+```powershell
+cd web
+npm install
+npm run dev:dashboard    # http://localhost:3000
+npm run dev:widget       # http://localhost:4173 (chat widget)
+```
+
+#### 5. EF migrations (without Redis)
 
 ```powershell
 $env:SUPPORTFLOW_EF_CONNECTION = "Host=localhost;Port=5432;Database=supportflow;Username=postgres;Password=postgres"
@@ -110,7 +119,7 @@ dotnet ef migrations add Initial --project src/Services/Identity/SupportFlow.Ide
 - **YARP** API Gateway
 - **MediatR** + FluentValidation (every service)
 - PostgreSQL, Redis (docker-compose — Module 0)
-- Next.js dashboard (coming in `web/`)
+- Next.js dashboard (available in `web/`)
 
 ### Team
 
