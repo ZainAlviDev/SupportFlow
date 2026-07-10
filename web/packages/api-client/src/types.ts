@@ -16,23 +16,31 @@ export type ApiError = {
 export type User = {
   id: string;
   email: string;
-  name: string;
+  fullName: string;
 };
 
 export type Workspace = {
   id: string;
   name: string;
   slug: string;
+  role: string;
+};
+
+export type LoginRequest = {
+  email: string;
+  password: string;
+};
+
+export type LoginResponse = {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+  user: User;
+  workspace: Workspace;
 };
 
 export type AuthTokens = {
   accessToken: string;
   refreshToken: string;
   expiresIn: number;
-};
-
-export type LoginResponse = {
-  user: User;
-  workspace: Workspace;
-  tokens: AuthTokens;
 };
