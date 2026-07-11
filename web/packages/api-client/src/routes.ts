@@ -9,6 +9,7 @@ export const API_ROUTES = {
     me: "/auth/me",
   },
   workspaces: {
+    root: "/workspaces",
     current: "/workspaces/current",
     members: "/workspaces/current/members",
     invite: "/workspaces/current/members/invite",

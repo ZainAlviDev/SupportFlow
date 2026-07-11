@@ -1,0 +1,22 @@
+[
+  {
+    "Name": "Auth Stack (Gateway + Identity + Workspace)",
+    "Projects": [
+      {
+        "Path": "src\\Gateway\\SupportFlow.Gateway\\SupportFlow.Gateway.csproj",
+        "Action": "Start",
+        "DebugTarget": "http"
+      },
+      {
+        "Path": "src\\Services\\Identity\\SupportFlow.Identity.Api\\SupportFlow.Identity.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "http"
+      },
+      {
+        "Path": "src\\Services\\Workspace\\SupportFlow.Workspace.Api\\SupportFlow.Workspace.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "http"
+      }
+    ]
+  }
+]

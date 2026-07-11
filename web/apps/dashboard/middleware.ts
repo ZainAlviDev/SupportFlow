@@ -8,15 +8,18 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get("sf_access_token")?.value;
 
   const isPublic = publicPaths.some((p) => pathname.startsWith(p));
+  const isRoot = pathname === "/";
   const isDashboard = !isPublic && !pathname.startsWith("/_next");
 
-  if (isDashboard && !token) {
-    // Allow through for dev scaffold — localStorage token used client-side
-    // TODO Module 1: switch to httpOnly cookie auth
-    return NextResponse.next();
+  if ((isDashboard || isRoot) && !token) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   if (isPublic && token) {
+    return NextResponse.redirect(new URL("/inbox", request.url));
+  }
+
+  if (isRoot && token) {
     return NextResponse.redirect(new URL("/inbox", request.url));
   }
 

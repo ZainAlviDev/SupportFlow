@@ -36,12 +36,21 @@ public sealed class ExceptionHandlingMiddleware
         }
         catch (UnauthorizedException exception)
         {
-            _logger.LogWarning(exception, "Unauthorized login attempt for {Method} {Path}", context.Request.Method, context.Request.Path);
+            _logger.LogWarning(exception, "Unauthorized request for {Method} {Path}", context.Request.Method, context.Request.Path);
 
             await WriteErrorAsync(
                 context,
                 StatusCodes.Status401Unauthorized,
                 new ApiErrorResponse(new ApiErrorBody("UNAUTHORIZED", exception.Message)));
+        }
+        catch (ConflictException exception)
+        {
+            _logger.LogWarning(exception, "Conflict for {Method} {Path}", context.Request.Method, context.Request.Path);
+
+            await WriteErrorAsync(
+                context,
+                StatusCodes.Status409Conflict,
+                new ApiErrorResponse(new ApiErrorBody("CONFLICT", exception.Message)));
         }
         catch (Exception exception)
         {

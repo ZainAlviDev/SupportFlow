@@ -1,20 +1,21 @@
 import { type ButtonHTMLAttributes } from "react";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "secondary" | "ghost";
+  variant?: "primary" | "secondary" | "outline" | "ghost";
   size?: "sm" | "md" | "lg";
 };
 
 const variants = {
-  primary: "bg-brand-600 text-white hover:bg-brand-700",
-  secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200",
-  ghost: "bg-transparent text-slate-700 hover:bg-slate-100",
+  primary: "bg-brand-500 text-white hover:bg-brand-600 shadow-sm",
+  secondary: "bg-line-soft text-ink hover:bg-line",
+  outline: "border border-line bg-white text-ink hover:bg-surface-soft",
+  ghost: "bg-transparent text-ink-soft hover:bg-line-soft",
 };
 
 const sizes = {
   sm: "h-8 px-3 text-sm",
-  md: "h-10 px-4 text-sm",
-  lg: "h-11 px-6 text-base",
+  md: "h-11 px-4 text-sm",
+  lg: "h-12 px-6 text-base",
 };
 
 export function Button({
@@ -25,7 +26,7 @@ export function Button({
 }: ButtonProps) {
   return (
     <button
-      className={`inline-flex items-center justify-center rounded-lg font-medium transition-colors disabled:opacity-50 ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}
     />
   );
