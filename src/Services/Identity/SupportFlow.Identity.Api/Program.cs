@@ -1,4 +1,4 @@
-﻿using SupportFlow.Identity.Api.Middleware;
+using SupportFlow.Identity.Api.Middleware;
 using SupportFlow.Identity.Application;
 using SupportFlow.Identity.Infrastructure;
 
@@ -12,6 +12,8 @@ builder.Services.AddHealthChecks();
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapHealthChecks("/health/live");
 app.MapControllers();

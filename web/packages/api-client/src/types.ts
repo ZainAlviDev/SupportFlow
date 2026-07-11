@@ -9,7 +9,7 @@ export type ApiError = {
   error: {
     code: string;
     message: string;
-    details?: Record<string, unknown>;
+    details?: Array<{ field?: string; message?: string }> | Record<string, unknown>;
   };
 };
 
@@ -31,10 +31,30 @@ export type LoginRequest = {
   password: string;
 };
 
+export type RegisterRequest = {
+  email: string;
+  password: string;
+  fullName: string;
+  workspaceName: string;
+};
+
+export type RefreshTokenRequest = {
+  refreshToken: string;
+};
+
+export type LogoutRequest = {
+  refreshToken: string;
+};
+
 export type LoginResponse = {
   accessToken: string;
   refreshToken: string;
   expiresIn: number;
+  user: User;
+  workspace: Workspace;
+};
+
+export type MeResponse = {
   user: User;
   workspace: Workspace;
 };

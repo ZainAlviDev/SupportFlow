@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using SupportFlow.Identity.Application.Common.Interfaces;
 using SupportFlow.Identity.Domain.Entities;
 using SupportFlow.Identity.Infrastructure.Auth;
@@ -35,13 +38,44 @@ public static class DependencyInjection
             .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
-        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+        var jwtSection = configuration.GetSection(JwtOptions.SectionName);
+        services.Configure<JwtOptions>(jwtSection);
         services.AddOptions<JwtOptions>()
-            .Bind(configuration.GetSection(JwtOptions.SectionName))
+            .Bind(jwtSection)
             .Validate(options => options.Secret.Length >= 32, "Jwt:Secret must be at least 32 characters.")
+            .Validate(options => options.AccessTokenExpiryMinutes > 0, "Jwt:AccessTokenExpiryMinutes must be greater than 0.")
             .ValidateOnStart();
+
+        var jwtOptions = jwtSection.Get<JwtOptions>()
+            ?? throw new InvalidOperationException("Jwt configuration section is missing.");
+
+        services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.MapInboundClaims = false;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtOptions.Issuer,
+                    ValidAudience = jwtOptions.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret)),
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
+
+        services.AddAuthorization();
+        services.AddHttpContextAccessor();
+
         services.AddScoped<JwtTokenService>();
         services.AddScoped<ILoginService, LoginService>();
+        services.AddScoped<IRegisterService, RegisterService>();
+        services.AddScoped<IAuthTokenService, AuthTokenService>();
+        services.AddScoped<IUserProfileService, UserProfileService>();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddHostedService<IdentityDataSeeder>();
 
         return services;

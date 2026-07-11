@@ -1,6 +1,26 @@
-@SupportFlow.Workspace.Api_HostAddress = http://localhost:5098
+@SupportFlow.Workspace.Api_HostAddress = http://localhost:5020
+@Gateway_HostAddress = http://localhost:5000
 
-GET {{SupportFlow.Workspace.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### Create workspace (via gateway)
+POST {{Gateway_HostAddress}}/api/v1/workspaces
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
 
-###
+{
+  "name": "Acme Corp",
+  "timezone": "UTC"
+}
+
+### Get current workspace (via gateway)
+GET {{Gateway_HostAddress}}/api/v1/workspaces/current
+Authorization: Bearer {{accessToken}}
+
+### Update current workspace (via gateway)
+PATCH {{Gateway_HostAddress}}/api/v1/workspaces/current
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Acme Support",
+  "timezone": "America/New_York"
+}

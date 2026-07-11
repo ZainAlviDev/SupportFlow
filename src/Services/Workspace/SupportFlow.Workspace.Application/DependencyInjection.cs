@@ -1,6 +1,8 @@
-﻿using System.Reflection;
+using System.Reflection;
 using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using SupportFlow.Workspace.Application.Common.Behaviors;
 
 namespace SupportFlow.Workspace.Application;
 
@@ -11,6 +13,7 @@ public static class DependencyInjection
         var assembly = Assembly.GetExecutingAssembly();
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
         services.AddValidatorsFromAssembly(assembly);
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         return services;
     }
 }
