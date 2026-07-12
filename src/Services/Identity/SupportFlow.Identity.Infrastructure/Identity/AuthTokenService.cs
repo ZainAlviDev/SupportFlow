@@ -47,7 +47,9 @@ public sealed class AuthTokenService : IAuthTokenService
             throw new UnauthorizedException("User account is not available.");
         }
 
+        // Refresh is pre-tenant: bypass global tenant filter to find the user's membership.
         var membership = await _dbContext.TenantMembers
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .Where(m =>
                 m.UserId == user.Id
@@ -62,6 +64,7 @@ public sealed class AuthTokenService : IAuthTokenService
         }
 
         var tenant = await _dbContext.Tenants
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .FirstOrDefaultAsync(
                 t => t.Id == membership.TenantId

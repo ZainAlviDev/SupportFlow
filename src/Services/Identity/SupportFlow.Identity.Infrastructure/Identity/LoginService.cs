@@ -42,7 +42,9 @@ public sealed class LoginService : ILoginService
             throw new UnauthorizedException();
         }
 
+        // Login is pre-tenant: bypass global tenant filter to find the user's membership.
         var membership = await _dbContext.TenantMembers
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .Where(m =>
                 m.UserId == user.Id
@@ -57,6 +59,7 @@ public sealed class LoginService : ILoginService
         }
 
         var tenant = await _dbContext.Tenants
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .FirstOrDefaultAsync(
                 t => t.Id == membership.TenantId

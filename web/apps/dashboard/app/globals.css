@@ -12,6 +12,14 @@
   --color-border: #e5e7eb;
 }
 
+.dark {
+  --color-surface: #1c252e;
+  --color-surface-soft: #121a21;
+  --color-text: #f3f4f6;
+  --color-text-muted: #9ca3af;
+  --color-border: #2a3440;
+}
+
 body {
   color: var(--color-text);
   background: var(--color-surface-soft);

@@ -1,0 +1,10 @@
+namespace SupportFlow.Shared.Kernel.Interfaces;
+
+public interface ITenantContext
+{
+    Guid TenantId { get; }
+
+    bool IsResolved { get; }
+
+    void SetTenant(Guid tenantId);
+}

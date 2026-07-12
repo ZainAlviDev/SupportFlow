@@ -5,6 +5,8 @@ export type ApiClientOptions = {
   baseUrl: string;
   getAccessToken?: () => string | null;
   getRefreshToken?: () => string | null;
+  /** When false, 401 immediately triggers onUnauthorized (no refresh). Default true. */
+  autoRefresh?: boolean;
   onTokensRefreshed?: (tokens: {
     accessToken: string;
     refreshToken: string;
@@ -45,13 +47,17 @@ export class ApiClient {
       );
     }
 
-    if (response.status === 401 && allowRefresh && path !== API_ROUTES.auth.refresh) {
-      const refreshed = await this.tryRefresh();
-      if (refreshed) {
-        return this.request<T>(path, init, false);
+    if (response.status === 401 && path !== API_ROUTES.auth.refresh) {
+      const canRefresh = this.options.autoRefresh !== false && allowRefresh;
+      if (canRefresh) {
+        const refreshed = await this.tryRefresh();
+        if (refreshed) {
+          return this.request<T>(path, init, false);
+        }
       }
 
       this.options.onUnauthorized?.();
+      throw new Error("Your session has expired. Please sign in again.");
     }
 
     if (response.status === 204) {

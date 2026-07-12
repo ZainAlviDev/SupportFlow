@@ -2,13 +2,27 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SupportFlow.Identity.Domain.Entities;
+using SupportFlow.Shared.Infrastructure.Persistence;
+using SupportFlow.Shared.Kernel.Interfaces;
+using SupportFlow.Shared.Kernel.Tenancy;
 
 namespace SupportFlow.Identity.Infrastructure.Persistence;
 
 public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    private readonly ITenantContext _tenantContext;
+
+    public ApplicationDbContext(
+        DbContextOptions<ApplicationDbContext> options,
+        ITenantContext tenantContext)
         : base(options)
+    {
+        _tenantContext = tenantContext;
+    }
+
+    /// <summary>Design-time and tests without a request scope.</summary>
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : this(options, new TenantContext())
     {
     }
 
@@ -96,5 +110,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
+
+        builder.ApplyTenantAndSoftDeleteFilters(_tenantContext);
     }
 }
