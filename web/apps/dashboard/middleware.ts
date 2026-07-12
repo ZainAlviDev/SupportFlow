@@ -5,21 +5,23 @@ const publicPaths = ["/login", "/register"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const token = request.cookies.get("sf_access_token")?.value;
+  // Long-lived marker only — real auth is Bearer token in localStorage / API client.
+  const session = request.cookies.get("sf_session")?.value
+    ?? request.cookies.get("sf_access_token")?.value;
 
   const isPublic = publicPaths.some((p) => pathname.startsWith(p));
   const isRoot = pathname === "/";
   const isDashboard = !isPublic && !pathname.startsWith("/_next");
 
-  if ((isDashboard || isRoot) && !token) {
+  if ((isDashboard || isRoot) && !session) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (isPublic && token) {
+  if (isPublic && session) {
     return NextResponse.redirect(new URL("/inbox", request.url));
   }
 
-  if (isRoot && token) {
+  if (isRoot && session) {
     return NextResponse.redirect(new URL("/inbox", request.url));
   }
 

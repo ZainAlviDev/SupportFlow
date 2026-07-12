@@ -1,21 +1,11 @@
-import {
-  ConversationList,
-  ConversationThread,
-  CustomerSidebar,
-} from "@/components/inbox/ConversationList";
+import { PlaceholderPage } from "@/components/layout/PlaceholderPage";
 
 export default function InboxPage() {
   return (
-    <div className="flex h-full">
-      <div className="w-72 border-r border-line bg-white">
-        <ConversationList />
-      </div>
-      <div className="flex flex-1 flex-col bg-white">
-        <ConversationThread />
-      </div>
-      <div className="w-80 border-l border-line bg-white">
-        <CustomerSidebar />
-      </div>
-    </div>
+    <PlaceholderPage
+      title="Inbox"
+      description="Real-time conversations and agent replies"
+      module="Module 3"
+    />
   );
 }

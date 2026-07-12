@@ -97,6 +97,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SupportFlow.Notification.In
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SupportFlow.Notification.Api", "src\Services\Notification\SupportFlow.Notification.Api\SupportFlow.Notification.Api.csproj", "{8DA130B7-B10D-42EC-B6C4-FDFADFDEA877}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SupportFlow.Shared.Infrastructure", "src\Shared\SupportFlow.Shared.Infrastructure\SupportFlow.Shared.Infrastructure.csproj", "{3F05FEFD-4542-4202-9420-BF6A3CC027A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -527,6 +529,18 @@ Global
 		{8DA130B7-B10D-42EC-B6C4-FDFADFDEA877}.Release|x64.Build.0 = Release|Any CPU
 		{8DA130B7-B10D-42EC-B6C4-FDFADFDEA877}.Release|x86.ActiveCfg = Release|Any CPU
 		{8DA130B7-B10D-42EC-B6C4-FDFADFDEA877}.Release|x86.Build.0 = Release|Any CPU
+		{3F05FEFD-4542-4202-9420-BF6A3CC027A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F05FEFD-4542-4202-9420-BF6A3CC027A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F05FEFD-4542-4202-9420-BF6A3CC027A6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3F05FEFD-4542-4202-9420-BF6A3CC027A6}.Debug|x64.Build.0 = Debug|Any CPU
+		{3F05FEFD-4542-4202-9420-BF6A3CC027A6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3F05FEFD-4542-4202-9420-BF6A3CC027A6}.Debug|x86.Build.0 = Debug|Any CPU
+		{3F05FEFD-4542-4202-9420-BF6A3CC027A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F05FEFD-4542-4202-9420-BF6A3CC027A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F05FEFD-4542-4202-9420-BF6A3CC027A6}.Release|x64.ActiveCfg = Release|Any CPU
+		{3F05FEFD-4542-4202-9420-BF6A3CC027A6}.Release|x64.Build.0 = Release|Any CPU
+		{3F05FEFD-4542-4202-9420-BF6A3CC027A6}.Release|x86.ActiveCfg = Release|Any CPU
+		{3F05FEFD-4542-4202-9420-BF6A3CC027A6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -578,5 +592,6 @@ Global
 		{0ABA056A-F81C-4CDF-AA4F-09D911BD73FE} = {C5FBE174-8E0F-F5A3-B929-8BD0C55C0A32}
 		{12FF3313-D58A-4BCB-95A0-F65104E2D0E5} = {C5FBE174-8E0F-F5A3-B929-8BD0C55C0A32}
 		{8DA130B7-B10D-42EC-B6C4-FDFADFDEA877} = {C5FBE174-8E0F-F5A3-B929-8BD0C55C0A32}
+		{3F05FEFD-4542-4202-9420-BF6A3CC027A6} = {C8E42992-5E42-0C2B-DBFE-AA848D06431C}
 	EndGlobalSection
 EndGlobal

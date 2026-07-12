@@ -1,3 +1,4 @@
+using SupportFlow.Shared.Infrastructure.Tenancy;
 using SupportFlow.Workspace.Api.Middleware;
 using SupportFlow.Workspace.Application;
 using SupportFlow.Workspace.Infrastructure;
@@ -14,6 +15,7 @@ var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<TenantResolutionMiddleware>();
 
 app.MapHealthChecks("/health/live");
 app.MapControllers();

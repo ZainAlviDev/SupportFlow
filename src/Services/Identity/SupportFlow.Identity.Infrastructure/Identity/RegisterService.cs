@@ -112,7 +112,10 @@ public sealed class RegisterService : IRegisterService
         var slug = baseSlug;
         var attempt = 1;
 
-        while (await _dbContext.Tenants.AnyAsync(t => t.Slug == slug, cancellationToken))
+        // Slug uniqueness includes soft-deleted rows (unique index); bypass soft-delete filter.
+        while (await _dbContext.Tenants
+                   .IgnoreQueryFilters()
+                   .AnyAsync(t => t.Slug == slug, cancellationToken))
         {
             attempt++;
             slug = $"{baseSlug}-{attempt}";

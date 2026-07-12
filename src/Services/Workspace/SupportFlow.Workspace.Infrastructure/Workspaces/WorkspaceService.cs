@@ -95,7 +95,10 @@ public sealed class WorkspaceService : IWorkspaceService
         var slug = baseSlug;
         var attempt = 1;
 
-        while (await _dbContext.Workspaces.AnyAsync(w => w.Slug == slug, cancellationToken))
+        // Slug uniqueness is global (unique index); bypass tenant Id + soft-delete filters.
+        while (await _dbContext.Workspaces
+                   .IgnoreQueryFilters()
+                   .AnyAsync(w => w.Slug == slug, cancellationToken))
         {
             attempt++;
             slug = $"{baseSlug}-{attempt}";

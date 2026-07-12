@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using SupportFlow.Workspace.Application.Common.Interfaces;
 using SupportFlow.Workspace.Infrastructure.Auth;
+using SupportFlow.Shared.Infrastructure;
 using SupportFlow.Workspace.Infrastructure.Persistence;
 using SupportFlow.Workspace.Infrastructure.Workspaces;
 
@@ -17,6 +18,8 @@ public static class DependencyInjection
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection")
             ?? throw new InvalidOperationException("Connection string 'DefaultConnection' was not found.");
+
+        services.AddSharedTenancy();
 
         services.AddDbContext<WorkspaceDbContext>(options =>
             options.UseSqlServer(connectionString));
