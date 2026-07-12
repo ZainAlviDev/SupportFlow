@@ -10,14 +10,14 @@ const settingsLinks = [
 export default function SettingsPage() {
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold text-charcoal">Settings</h1>
+      <h1 className="text-2xl font-semibold text-charcoal dark:text-white">Settings</h1>
       <p className="mt-1 text-sm text-ink-muted">Manage your workspace</p>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {settingsLinks.map((link) => (
           <Link key={link.href} href={link.href}>
-            <Card className="transition-shadow hover:shadow-md">
+            <Card className="transition-shadow hover:shadow-md dark:border-charcoal-muted dark:bg-charcoal">
               <CardContent className="py-6">
-                <p className="font-medium text-charcoal">{link.label}</p>
+                <p className="font-medium text-charcoal dark:text-white">{link.label}</p>
                 <p className="mt-1 text-sm text-ink-muted">{link.description}</p>
               </CardContent>
             </Card>

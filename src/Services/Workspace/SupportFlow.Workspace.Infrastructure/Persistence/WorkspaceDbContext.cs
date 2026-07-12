@@ -1,12 +1,25 @@
 using Microsoft.EntityFrameworkCore;
+using SupportFlow.Shared.Kernel.Interfaces;
+using SupportFlow.Shared.Kernel.Tenancy;
 using SupportFlow.Workspace.Domain.Entities;
 
 namespace SupportFlow.Workspace.Infrastructure.Persistence;
 
 public class WorkspaceDbContext : DbContext
 {
-    public WorkspaceDbContext(DbContextOptions<WorkspaceDbContext> options)
+    private readonly ITenantContext _tenantContext;
+
+    public WorkspaceDbContext(
+        DbContextOptions<WorkspaceDbContext> options,
+        ITenantContext tenantContext)
         : base(options)
+    {
+        _tenantContext = tenantContext;
+    }
+
+    /// <summary>Design-time and tests without a request scope.</summary>
+    public WorkspaceDbContext(DbContextOptions<WorkspaceDbContext> options)
+        : this(options, new TenantContext())
     {
     }
 
@@ -29,6 +42,9 @@ public class WorkspaceDbContext : DbContext
             entity.Property(x => x.Status).HasConversion<int>();
 
             entity.HasIndex(x => x.Slug).IsUnique();
+
+            // Workspace row Id == TenantId (not ITenantEntity); isolate by Id.
+            entity.HasQueryFilter(e => !e.IsDeleted && e.Id == _tenantContext.TenantId);
         });
     }
 }

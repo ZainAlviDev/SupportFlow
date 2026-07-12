@@ -11,6 +11,7 @@ using SupportFlow.Identity.Infrastructure.Auth;
 using SupportFlow.Identity.Infrastructure.Identity;
 using SupportFlow.Identity.Infrastructure.Persistence;
 using SupportFlow.Identity.Infrastructure.Seeding;
+using SupportFlow.Shared.Infrastructure;
 
 namespace SupportFlow.Identity.Infrastructure;
 
@@ -21,6 +22,8 @@ public static class DependencyInjection
         var connectionString = configuration.GetConnectionString("DefaultConnection")
             ?? configuration["SUPPORTFLOW:EfToolsConnectionString"]
             ?? throw new InvalidOperationException("Connection string 'DefaultConnection' was not found.");
+
+        services.AddSharedTenancy();
 
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));

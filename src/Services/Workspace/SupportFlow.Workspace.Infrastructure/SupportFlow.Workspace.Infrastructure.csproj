@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SupportFlow.Workspace.Application\SupportFlow.Workspace.Application.csproj" />
     <ProjectReference Include="..\SupportFlow.Workspace.Domain\SupportFlow.Workspace.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Shared\SupportFlow.Shared.Infrastructure\SupportFlow.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -16,7 +16,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-full w-64 flex-col border-r border-line bg-white">
+    <aside className="flex h-full w-64 flex-col border-r border-line bg-white dark:border-charcoal-muted dark:bg-charcoal">
       <div className="flex h-16 items-center bg-charcoal px-5">
         <SupportFlowLogo inverted />
       </div>
@@ -30,8 +30,8 @@ export function Sidebar() {
               href={item.href}
               className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                 active
-                  ? "bg-brand-50 text-brand-700"
-                  : "text-ink-soft hover:bg-surface-soft hover:text-ink"
+                  ? "bg-brand-50 text-brand-700 dark:bg-charcoal-muted dark:text-brand-300"
+                  : "text-ink-soft hover:bg-surface-soft hover:text-ink dark:text-ink-faint dark:hover:bg-charcoal-soft dark:hover:text-white"
               }`}
             >
               {item.label}
@@ -40,7 +40,7 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="border-t border-line p-4 text-xs text-ink-faint">
+      <div className="border-t border-line p-4 text-xs text-ink-faint dark:border-charcoal-muted">
         TechHub · Phase 1
       </div>
     </aside>
