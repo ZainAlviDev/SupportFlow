@@ -1,20 +1,22 @@
 "use client";
 
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import {
   createWorkspace,
   login as loginRequest,
   logout as logoutRequest,
   register as registerRequest,
+  verifyEmail as verifyEmailRequest,
   type LoginResponse,
   type RegisterRequest,
+  type RegisterResponse,
   type User,
   type Workspace,
 } from "@supportflow/api-client";
 import { Dialog } from "@supportflow/ui";
 import { api, clearSessionCookies, persistSessionCookies } from "@/lib/api";
-import { notifySessionExpired, onSessionExpired, resetSessionExpiredFlag } from "@/lib/session-events";
+import { onSessionExpired, resetSessionExpiredFlag } from "@/lib/session-events";
 
 const ACCESS_TOKEN_KEY = "sf_access_token";
 const REFRESH_TOKEN_KEY = "sf_refresh_token";
@@ -27,7 +29,8 @@ type AuthContextValue = {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (payload: RegisterRequest) => Promise<void>;
+  register: (payload: RegisterRequest) => Promise<RegisterResponse>;
+  verifyEmail: (email: string, code: string, workspaceName?: string) => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -51,7 +54,21 @@ function readStoredAuth(): { user: User | null; workspace: Workspace | null } {
   }
 }
 
+function readJwtExpiryMs(accessToken: string): number | null {
+  try {
+    const payload = accessToken.split(".")[1];
+    if (!payload) return null;
+    const padded = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const pad = padded.length % 4 === 0 ? "" : "=".repeat(4 - (padded.length % 4));
+    const json = JSON.parse(atob(padded + pad)) as { exp?: number };
+    return typeof json.exp === "number" ? json.exp * 1000 : null;
+  } catch {
+    return null;
+  }
+}
+
 function persistAuth(response: LoginResponse) {
+  resetSessionExpiredFlag();
   localStorage.setItem(ACCESS_TOKEN_KEY, response.accessToken);
   localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
   localStorage.setItem(USER_KEY, JSON.stringify(response.user));
@@ -67,122 +84,100 @@ function clearAuth() {
   clearSessionCookies();
 }
 
-function readJwtExpiryMs(accessToken: string): number | null {
-  try {
-    const payload = accessToken.split(".")[1];
-    if (!payload) return null;
-    const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/"))) as { exp?: number };
-    return typeof json.exp === "number" ? json.exp * 1000 : null;
-  } catch {
-    return null;
-  }
-}
-
-function endAccessSession() {
-  localStorage.removeItem(ACCESS_TOKEN_KEY);
-  localStorage.removeItem(REFRESH_TOKEN_KEY);
-  localStorage.removeItem(USER_KEY);
-  localStorage.removeItem(WORKSPACE_KEY);
-  // Keep sf_session until the user clicks OK so middleware does not steal the redirect.
-  notifySessionExpired();
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [sessionExpiredOpen, setSessionExpiredOpen] = useState(false);
-  const expiryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const stored = readStoredAuth();
-    setUser(stored.user);
-    setWorkspace(stored.workspace);
+    const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY);
+    const expiresAt = accessToken ? readJwtExpiryMs(accessToken) : null;
+    const stillValid =
+      Boolean(stored.user && accessToken) && (expiresAt == null || expiresAt > Date.now());
 
-    if (stored.user && localStorage.getItem(ACCESS_TOKEN_KEY)) {
-      persistSessionCookies("", 0);
+    if (stillValid) {
+      setUser(stored.user);
+      setWorkspace(stored.workspace);
+      persistSessionCookies(accessToken!, Math.max(0, Math.floor(((expiresAt ?? Date.now()) - Date.now()) / 1000)));
+    } else {
+      clearAuth();
+      resetSessionExpiredFlag();
+      setUser(null);
+      setWorkspace(null);
     }
   }, []);
 
   useEffect(() => {
     return onSessionExpired(() => {
       setSessionExpiredOpen(true);
+      setUser(null);
+      setWorkspace(null);
     });
   }, []);
-
-  // Hard 1-minute access session: when the JWT expires, show modal (no silent refresh).
-  useEffect(() => {
-    if (expiryTimerRef.current) {
-      clearTimeout(expiryTimerRef.current);
-      expiryTimerRef.current = null;
-    }
-
-    if (!user || sessionExpiredOpen) {
-      return;
-    }
-
-    const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY);
-    if (!accessToken) {
-      return;
-    }
-
-    const expiresAt = readJwtExpiryMs(accessToken);
-    const delay = expiresAt != null ? Math.max(expiresAt - Date.now(), 0) : 60_000;
-
-    expiryTimerRef.current = setTimeout(() => {
-      endAccessSession();
-    }, delay);
-
-    return () => {
-      if (expiryTimerRef.current) {
-        clearTimeout(expiryTimerRef.current);
-      }
-    };
-  }, [user, sessionExpiredOpen]);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
       const response = await loginRequest(api, { email, password });
-      resetSessionExpiredFlag();
       persistAuth(response);
+      setSessionExpiredOpen(false);
       setUser(response.user);
       setWorkspace(response.workspace);
-      setSessionExpiredOpen(false);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const register = async (payload: RegisterRequest) => {
+  const register = async (payload: RegisterRequest): Promise<RegisterResponse> => {
     setIsLoading(true);
     try {
-      const response = await registerRequest(api, payload);
-      resetSessionExpiredFlag();
-      persistAuth(response);
-      setUser(response.user);
-      setWorkspace(response.workspace);
-      setSessionExpiredOpen(false);
+      return await registerRequest(api, payload);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-      try {
-        const details = await createWorkspace(api, {
-          name: payload.workspaceName,
-          timezone: "UTC",
-        });
+  const completeLogin = async (response: LoginResponse, workspaceName?: string) => {
+    persistAuth(response);
+    setSessionExpiredOpen(false);
+    setUser(response.user);
+    setWorkspace(response.workspace);
 
-        const workspaceState: Workspace = {
-          id: details.id,
-          name: details.name,
-          slug: details.slug,
-          role: response.workspace.role,
-        };
+    if (!workspaceName?.trim()) {
+      return;
+    }
 
-        localStorage.setItem(WORKSPACE_KEY, JSON.stringify(workspaceState));
-        setWorkspace(workspaceState);
-      } catch (workspaceError) {
-        console.warn("Workspace profile create skipped:", workspaceError);
-      }
+    try {
+      const details = await createWorkspace(api, {
+        name: workspaceName.trim(),
+        timezone: "UTC",
+      });
+
+      const workspaceState: Workspace = {
+        id: details.id,
+        name: details.name,
+        slug: details.slug,
+        role: response.workspace.role,
+      };
+
+      localStorage.setItem(WORKSPACE_KEY, JSON.stringify(workspaceState));
+      setWorkspace(workspaceState);
+    } catch (workspaceError) {
+      console.warn("Workspace profile create skipped:", workspaceError);
+    }
+  };
+
+  const verifyEmail = async (email: string, code: string, workspaceName?: string) => {
+    setIsLoading(true);
+    try {
+      const response = await verifyEmailRequest(api, { email, code });
+      await completeLogin(response, workspaceName);
+      clearAuth();
+      setUser(null);
+      setWorkspace(null);
     } finally {
       setIsLoading(false);
     }
@@ -222,14 +217,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated: Boolean(user),
         login,
         register,
+        verifyEmail,
         logout,
       }}
     >
       {children}
       <Dialog
         open={sessionExpiredOpen}
-        title="Your desk shift ended"
-        description="SupportFlow paused your session for security — your 1-minute login window ran out. Sign in again to continue."
+        title="Your session ended"
+        description="SupportFlow signed you out because your authenticated request was rejected. Sign in again to continue."
         primaryLabel="Back to login"
         onPrimary={handleSessionExpiredOk}
       />

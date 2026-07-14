@@ -15,6 +15,18 @@ export type ApiClientOptions = {
   onUnauthorized?: () => void;
 };
 
+/** Auth routes that expect 401 for bad credentials / OTP — never treat as "session expired". */
+const ANONYMOUS_AUTH_PATHS = new Set<string>([
+  API_ROUTES.auth.login,
+  API_ROUTES.auth.register,
+  API_ROUTES.auth.refresh,
+  API_ROUTES.auth.forgotPassword,
+  API_ROUTES.auth.verifyResetOtp,
+  API_ROUTES.auth.resetPassword,
+  API_ROUTES.auth.recoveryOptions,
+  API_ROUTES.auth.verifyEmail,
+]);
+
 export class ApiClient {
   private refreshPromise: Promise<boolean> | null = null;
 
@@ -30,7 +42,9 @@ export class ApiClient {
       headers.set("Content-Type", "application/json");
     }
 
-    const token = this.options.getAccessToken?.();
+    const isAnonymousAuth = ANONYMOUS_AUTH_PATHS.has(path);
+    // Do not attach a stale Bearer token to login/register/etc. — it confuses auth and 401 handling.
+    const token = isAnonymousAuth ? null : this.options.getAccessToken?.();
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
     }
@@ -47,7 +61,13 @@ export class ApiClient {
       );
     }
 
-    if (response.status === 401 && path !== API_ROUTES.auth.refresh) {
+    if (response.status === 401) {
+      if (isAnonymousAuth) {
+        const body = await response.json().catch(() => null);
+        const err = body as ApiError | null;
+        throw new Error(err?.error?.message ?? "Invalid credentials. Please try again.");
+      }
+
       const canRefresh = this.options.autoRefresh !== false && allowRefresh;
       if (canRefresh) {
         const refreshed = await this.tryRefresh();
@@ -56,8 +76,14 @@ export class ApiClient {
         }
       }
 
-      this.options.onUnauthorized?.();
-      throw new Error("Your session has expired. Please sign in again.");
+      // Only a failed authenticated call should kill the session.
+      if (token) {
+        this.options.onUnauthorized?.();
+      }
+
+      const body = await response.json().catch(() => null);
+      const err = body as ApiError | null;
+      throw new Error(err?.error?.message ?? "Your session has expired. Please sign in again.");
     }
 
     if (response.status === 204) {
