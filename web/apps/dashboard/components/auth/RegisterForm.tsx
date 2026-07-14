@@ -7,7 +7,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SupportFlowLogo } from "@/components/brand/SupportFlowLogo";
 import { useAuth } from "@/hooks/useAuth";
-import { registerSchema, type RegisterFormValues } from "@/lib/validations/auth";
+import { clearSessionCookies } from "@/lib/api";
+import { registerSchema, toE164, type RegisterFormValues } from "@/lib/validations/auth";
+import { COUNTRY_DIAL_CODES } from "@/lib/countryDialCodes";
 import { Button, Input, Label } from "@supportflow/ui";
 
 type Step = 1 | 2;
@@ -29,6 +31,8 @@ export function RegisterForm() {
     defaultValues: {
       fullName: "",
       email: "",
+      phoneCountryCode: "+92",
+      phoneNationalNumber: "",
       workspaceName: "",
       password: "",
     },
@@ -37,7 +41,7 @@ export function RegisterForm() {
 
   const goToWorkspaceStep = async () => {
     setApiError(null);
-    const valid = await trigger(["fullName", "email", "password"]);
+    const valid = await trigger(["fullName", "email", "password", "phoneCountryCode", "phoneNationalNumber"]);
     if (valid) {
       setStep(2);
     }
@@ -47,13 +51,28 @@ export function RegisterForm() {
     setApiError(null);
 
     try {
-      await registerAccount({
+      const response = await registerAccount({
         email: values.email,
         password: values.password,
         fullName: values.fullName,
         workspaceName: values.workspaceName,
+        phoneNumber: toE164(values.phoneCountryCode, values.phoneNationalNumber),
       });
-      router.push("/inbox");
+
+      sessionStorage.setItem("sf_pending_workspace_name", values.workspaceName.trim());
+
+      // Ensure no leftover session cookies bounce the user to the dashboard.
+      localStorage.removeItem("sf_access_token");
+      localStorage.removeItem("sf_refresh_token");
+      localStorage.removeItem("sf_user");
+      localStorage.removeItem("sf_workspace");
+      clearSessionCookies();
+
+      const params = new URLSearchParams({ email: response.email });
+      if (response.devOtp) {
+        params.set("devOtp", response.devOtp);
+      }
+      router.push(`/verify-email?${params.toString()}`);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unable to create workspace. Please try again.";
@@ -132,6 +151,44 @@ export function RegisterForm() {
             </div>
 
             <div>
+              <Label htmlFor="phoneNationalNumber">WhatsApp number</Label>
+              <div className="mt-1.5 flex gap-2">
+                <select
+                  id="phoneCountryCode"
+                  className="h-11 rounded-lg border border-line bg-white px-2 text-sm text-ink"
+                  {...register("phoneCountryCode")}
+                >
+                  {COUNTRY_DIAL_CODES.map((item) => (
+                    <option key={item.code} value={item.code}>
+                      {item.code}
+                    </option>
+                  ))}
+                </select>
+                <Input
+                  id="phoneNationalNumber"
+                  inputMode="numeric"
+                  autoComplete="tel-national"
+                  placeholder="3001234567"
+                  aria-invalid={Boolean(errors.phoneNationalNumber)}
+                  className={
+                    errors.phoneNationalNumber
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                      : ""
+                  }
+                  {...register("phoneNationalNumber")}
+                />
+              </div>
+              {(errors.phoneCountryCode || errors.phoneNationalNumber) && (
+                <p className="mt-1.5 text-sm text-red-600">
+                  {errors.phoneNationalNumber?.message ?? errors.phoneCountryCode?.message}
+                </p>
+              )}
+              <p className="mt-1.5 text-xs text-ink-faint">
+                Saved on your account for WhatsApp password recovery.
+              </p>
+            </div>
+
+            <div>
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
@@ -193,7 +250,7 @@ export function RegisterForm() {
                 Back
               </Button>
               <Button type="submit" className="w-full" disabled={submitting}>
-                {submitting ? "Creating workspace..." : "Create workspace"}
+                {submitting ? "Creating account..." : "Create account"}
               </Button>
             </div>
           </>

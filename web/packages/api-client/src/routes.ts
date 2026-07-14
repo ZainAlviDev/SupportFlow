@@ -7,6 +7,11 @@ export const API_ROUTES = {
     refresh: "/auth/refresh",
     logout: "/auth/logout",
     me: "/auth/me",
+    forgotPassword: "/auth/forgot-password",
+    verifyResetOtp: "/auth/verify-reset-otp",
+    resetPassword: "/auth/reset-password",
+    recoveryOptions: "/auth/recovery-options",
+    verifyEmail: "/auth/verify-email",
   },
   workspaces: {
     root: "/workspaces",

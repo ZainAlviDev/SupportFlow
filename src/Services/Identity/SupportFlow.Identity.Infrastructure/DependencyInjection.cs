@@ -9,6 +9,8 @@ using SupportFlow.Identity.Application.Common.Interfaces;
 using SupportFlow.Identity.Domain.Entities;
 using SupportFlow.Identity.Infrastructure.Auth;
 using SupportFlow.Identity.Infrastructure.Identity;
+using SupportFlow.Identity.Infrastructure.Messaging;
+using SupportFlow.Identity.Infrastructure.Options;
 using SupportFlow.Identity.Infrastructure.Persistence;
 using SupportFlow.Identity.Infrastructure.Seeding;
 using SupportFlow.Shared.Infrastructure;
@@ -39,7 +41,8 @@ public static class DependencyInjection
                 options.Password.RequiredLength = 8;
             })
             .AddRoles<IdentityRole<Guid>>()
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
         var jwtSection = configuration.GetSection(JwtOptions.SectionName);
         services.Configure<JwtOptions>(jwtSection);
@@ -72,6 +75,10 @@ public static class DependencyInjection
 
         services.AddAuthorization();
         services.AddHttpContextAccessor();
+        services.AddHttpClient();
+        services.Configure<OtpOptions>(configuration.GetSection(OtpOptions.SectionName));
+        services.Configure<EmailOptions>(configuration.GetSection(EmailOptions.SectionName));
+        services.Configure<WhatsAppOptions>(configuration.GetSection(WhatsAppOptions.SectionName));
 
         services.AddScoped<JwtTokenService>();
         services.AddScoped<ILoginService, LoginService>();
@@ -79,6 +86,27 @@ public static class DependencyInjection
         services.AddScoped<IAuthTokenService, AuthTokenService>();
         services.AddScoped<IUserProfileService, UserProfileService>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<IPasswordResetService, PasswordResetService>();
+
+        services.AddSingleton<ConsoleEmailOtpSender>();
+        services.AddSingleton<ConsoleWhatsAppOtpSender>();
+        services.AddScoped<SmtpEmailOtpSender>();
+        services.AddScoped<MetaWhatsAppOtpSender>();
+        services.AddScoped<IEmailOtpSender>(sp =>
+        {
+            var options = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<EmailOptions>>().Value;
+            return string.Equals(options.Provider, "Smtp", StringComparison.OrdinalIgnoreCase)
+                ? sp.GetRequiredService<SmtpEmailOtpSender>()
+                : sp.GetRequiredService<ConsoleEmailOtpSender>();
+        });
+        services.AddScoped<IWhatsAppOtpSender>(sp =>
+        {
+            var options = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<WhatsAppOptions>>().Value;
+            return options is { Enabled: true, Provider: "Meta" }
+                ? sp.GetRequiredService<MetaWhatsAppOtpSender>()
+                : sp.GetRequiredService<ConsoleWhatsAppOtpSender>();
+        });
+
         services.AddHostedService<IdentityDataSeeder>();
 
         return services;

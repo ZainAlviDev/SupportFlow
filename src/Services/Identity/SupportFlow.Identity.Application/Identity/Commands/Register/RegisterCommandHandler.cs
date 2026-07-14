@@ -4,7 +4,7 @@ using SupportFlow.Shared.Contracts.Auth;
 
 namespace SupportFlow.Identity.Application.Identity.Commands.Register;
 
-public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, LoginResponse>
+public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisterResponse>
 {
     private readonly IRegisterService _registerService;
 
@@ -13,10 +13,15 @@ public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, Lo
         _registerService = registerService;
     }
 
-    public Task<LoginResponse> Handle(RegisterCommand request, CancellationToken cancellationToken)
+    public Task<RegisterResponse> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
         return _registerService.RegisterAsync(
-            new RegisterRequest(request.Email, request.Password, request.FullName, request.WorkspaceName),
+            new RegisterRequest(
+                request.Email,
+                request.Password,
+                request.FullName,
+                request.WorkspaceName,
+                request.PhoneNumber),
             cancellationToken);
     }
 }
