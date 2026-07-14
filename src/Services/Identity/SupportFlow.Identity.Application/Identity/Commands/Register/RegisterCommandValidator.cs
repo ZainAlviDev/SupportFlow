@@ -18,6 +18,9 @@ public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand
             .NotEmpty().WithMessage("Workspace name is required.")
             .MinimumLength(2).WithMessage("Workspace name must be at least 2 characters.");
 
+        RuleFor(x => x.PhoneNumber)
+            .NotEmpty().WithMessage("Phone number is required.");
+
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Password is required.")
             .MinimumLength(8).WithMessage("Password must be at least 8 characters.")

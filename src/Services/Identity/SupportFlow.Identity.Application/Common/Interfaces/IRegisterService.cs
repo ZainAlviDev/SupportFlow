@@ -4,5 +4,5 @@ namespace SupportFlow.Identity.Application.Common.Interfaces;
 
 public interface IRegisterService
 {
-    Task<LoginResponse> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken);
+    Task<RegisterResponse> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken);
 }

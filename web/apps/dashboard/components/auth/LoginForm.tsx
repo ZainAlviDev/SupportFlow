@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SupportFlowLogo } from "@/components/brand/SupportFlowLogo";
@@ -33,9 +33,13 @@ function GoogleIcon() {
   );
 }
 
-export function LoginForm() {
+function LoginFormInner() {
   const { login, isLoading } = useAuth();
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  const emailFromQuery = searchParams.get("email") ?? "";
+  const justRegistered = searchParams.get("registered") === "1";
+  const justVerified = searchParams.get("verified") === "1";
+  const hintOtp = searchParams.get("devOtp");
   const [apiError, setApiError] = useState<string | null>(null);
 
   const {
@@ -45,7 +49,7 @@ export function LoginForm() {
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
+      email: emailFromQuery,
       password: "",
     },
     mode: "onBlur",
@@ -56,7 +60,8 @@ export function LoginForm() {
 
     try {
       await login(values.email, values.password);
-      router.push("/inbox");
+      // Hard navigation so the sf_session cookie is present for middleware on /inbox.
+      window.location.assign("/inbox");
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unable to sign in. Please try again.";
@@ -65,6 +70,14 @@ export function LoginForm() {
   };
 
   const submitting = isLoading || isSubmitting;
+
+  const verifyHref = (() => {
+    const params = new URLSearchParams();
+    if (emailFromQuery) params.set("email", emailFromQuery);
+    if (hintOtp) params.set("devOtp", hintOtp);
+    const qs = params.toString();
+    return qs ? `/verify-email?${qs}` : "/verify-email";
+  })();
 
   return (
     <div>
@@ -78,12 +91,48 @@ export function LoginForm() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+        {justRegistered && (
+          <div
+            role="status"
+            className="rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-sm text-brand-800"
+          >
+            Account created.{" "}
+            <Link href={verifyHref} className="font-semibold underline">
+              Verify your email
+            </Link>{" "}
+            with the code we sent, then sign in.
+            {hintOtp ? (
+              <>
+                {" "}
+                Dev OTP: <strong>{hintOtp}</strong>
+              </>
+            ) : null}
+          </div>
+        )}
+
+        {justVerified && (
+          <div
+            role="status"
+            className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800"
+          >
+            Email verified. Sign in to open your workspace.
+          </div>
+        )}
+
         {apiError && (
           <div
             role="alert"
             className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
           >
             {apiError}
+            {apiError.toLowerCase().includes("verify") && (
+              <>
+                {" "}
+                <Link href={verifyHref} className="font-semibold underline">
+                  Enter verification code
+                </Link>
+              </>
+            )}
           </div>
         )}
 
@@ -126,12 +175,9 @@ export function LoginForm() {
             </p>
           )}
           <div className="mt-2 flex justify-end">
-            <button
-              type="button"
-              className="text-sm font-medium text-brand-600 hover:text-brand-700"
-            >
+            <Link href="/forgot-password" className="text-sm font-medium text-brand-600 hover:text-brand-700">
               Forgot password?
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -158,5 +204,13 @@ export function LoginForm() {
         </Link>
       </p>
     </div>
+  );
+}
+
+export function LoginForm() {
+  return (
+    <Suspense fallback={<div className="text-sm text-ink-muted">Loading...</div>}>
+      <LoginFormInner />
+    </Suspense>
   );
 }

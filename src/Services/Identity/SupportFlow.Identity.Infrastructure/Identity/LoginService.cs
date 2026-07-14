@@ -42,6 +42,11 @@ public sealed class LoginService : ILoginService
             throw new UnauthorizedException();
         }
 
+        if (!user.EmailConfirmed)
+        {
+            throw new UnauthorizedException("Please verify your email before signing in.");
+        }
+
         // Login is pre-tenant: bypass global tenant filter to find the user's membership.
         var membership = await _dbContext.TenantMembers
             .IgnoreQueryFilters()

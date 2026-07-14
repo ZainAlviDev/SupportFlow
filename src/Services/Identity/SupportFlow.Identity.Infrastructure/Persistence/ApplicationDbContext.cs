@@ -29,6 +29,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     public DbSet<Tenant> Tenants => Set<Tenant>();
     public DbSet<TenantMember> TenantMembers => Set<TenantMember>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<PasswordResetChallenge> PasswordResetChallenges => Set<PasswordResetChallenge>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -90,6 +91,15 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
 
             entity.Property(x => x.Status)
                 .HasConversion<int>();
+
+            entity.HasIndex(x => x.NormalizedEmail)
+                .IsUnique()
+                .HasDatabaseName("EmailIndex")
+                .HasFilter("[NormalizedEmail] IS NOT NULL");
+
+            entity.HasIndex(x => x.PhoneNumber)
+                .IsUnique()
+                .HasFilter("[PhoneNumber] IS NOT NULL");
         });
 
         builder.Entity<RefreshToken>(entity =>
@@ -105,6 +115,20 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.HasIndex(x => x.TokenHash)
                 .IsUnique();
 
+            entity.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<PasswordResetChallenge>(entity =>
+        {
+            entity.ToTable("PasswordResetChallenges");
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Channel).HasMaxLength(20).IsRequired();
+            entity.Property(x => x.CodeHash).HasMaxLength(128).IsRequired();
+            entity.Property(x => x.ResetTokenHash).HasMaxLength(128);
+            entity.HasIndex(x => new { x.UserId, x.Channel, x.CreatedAt });
             entity.HasOne<User>()
                 .WithMany()
                 .HasForeignKey(x => x.UserId)
