@@ -6,9 +6,16 @@ public interface ICurrentUserService
 {
     Guid? UserId { get; }
     Guid? TenantId { get; }
+    string? Role { get; }
 }
 
 public interface IUserProfileService
 {
     Task<MeResponse> GetMeAsync(Guid userId, Guid tenantId, CancellationToken cancellationToken);
+
+    Task<AuthWorkspaceDto> UpdateTenantNameAsync(
+        Guid userId,
+        Guid tenantId,
+        string name,
+        CancellationToken cancellationToken);
 }

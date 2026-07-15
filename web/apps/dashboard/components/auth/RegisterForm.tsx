@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { clearSessionCookies } from "@/lib/api";
 import { registerSchema, toE164, type RegisterFormValues } from "@/lib/validations/auth";
 import { COUNTRY_DIAL_CODES } from "@/lib/countryDialCodes";
-import { Button, Input, Label } from "@supportflow/ui";
+import { Button, Input, Label, PasswordInput } from "@supportflow/ui";
 
 type Step = 1 | 2;
 
@@ -190,9 +190,8 @@ export function RegisterForm() {
 
             <div>
               <Label htmlFor="password">Password</Label>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
                 autoComplete="new-password"
                 placeholder="Create a strong password"
                 aria-invalid={Boolean(errors.password)}

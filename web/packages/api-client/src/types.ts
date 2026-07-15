@@ -60,6 +60,21 @@ export type VerifyEmailRequest = {
   code: string;
 };
 
+export type InvitePreviewResponse = {
+  workspaceName: string;
+  email: string;
+  role: string;
+  expiresAt: string;
+  accountExists: boolean;
+};
+
+export type AcceptInviteRequest = {
+  token: string;
+  password?: string;
+  fullName?: string;
+  phoneNumber?: string;
+};
+
 export type ForgotPasswordRequest = {
   channel: "email" | "whatsapp";
   email?: string;

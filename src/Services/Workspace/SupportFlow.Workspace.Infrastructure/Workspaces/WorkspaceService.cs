@@ -52,17 +52,7 @@ public sealed class WorkspaceService : IWorkspaceService
 
     public async Task<WorkspaceDto> GetCurrentAsync(Guid tenantId, CancellationToken cancellationToken)
     {
-        var workspace = await _dbContext.Workspaces
-            .AsNoTracking()
-            .FirstOrDefaultAsync(
-                w => w.Id == tenantId && !w.IsDeleted && w.Status == EntityStatus.Active,
-                cancellationToken);
-
-        if (workspace is null)
-        {
-            throw new NotFoundException("Workspace was not found for the current tenant.");
-        }
-
+        var workspace = await EnsureProfileAsync(tenantId, preferredName: null, preferredTimezone: null, cancellationToken);
         return Map(workspace);
     }
 
@@ -73,20 +63,45 @@ public sealed class WorkspaceService : IWorkspaceService
         string? settingsJson,
         CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(name)
+            && string.IsNullOrWhiteSpace(timezone)
+            && settingsJson is null)
+        {
+            throw new ConflictException("Provide a workspace name and/or timezone to update.");
+        }
+
+        var workspace = await EnsureProfileAsync(tenantId, name, timezone, cancellationToken);
+        workspace.Update(name, timezone, settingsJson);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return Map(workspace);
+    }
+
+    private async Task<WorkspaceProfile> EnsureProfileAsync(
+        Guid tenantId,
+        string? preferredName,
+        string? preferredTimezone,
+        CancellationToken cancellationToken)
+    {
         var workspace = await _dbContext.Workspaces
             .FirstOrDefaultAsync(
                 w => w.Id == tenantId && !w.IsDeleted && w.Status == EntityStatus.Active,
                 cancellationToken);
 
-        if (workspace is null)
+        if (workspace is not null)
         {
-            throw new NotFoundException("Workspace was not found for the current tenant.");
+            return workspace;
         }
 
-        workspace.Update(name, timezone, settingsJson);
+        var seedName = string.IsNullOrWhiteSpace(preferredName) ? "My Workspace" : preferredName.Trim();
+        var seedTimezone = string.IsNullOrWhiteSpace(preferredTimezone) ? "UTC" : preferredTimezone.Trim();
+        var slug = await CreateUniqueSlugAsync(seedName, cancellationToken);
+
+        workspace = new WorkspaceProfile(tenantId, seedName, slug, seedTimezone);
+        _dbContext.Workspaces.Add(workspace);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return Map(workspace);
+        return workspace;
     }
 
     private async Task<string> CreateUniqueSlugAsync(string source, CancellationToken cancellationToken)

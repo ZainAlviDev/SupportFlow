@@ -8,6 +8,8 @@ import {
   logout as logoutRequest,
   register as registerRequest,
   verifyEmail as verifyEmailRequest,
+  acceptInvite as acceptInviteRequest,
+  type AcceptInviteRequest,
   type LoginResponse,
   type RegisterRequest,
   type RegisterResponse,
@@ -31,7 +33,10 @@ type AuthContextValue = {
   login: (email: string, password: string) => Promise<void>;
   register: (payload: RegisterRequest) => Promise<RegisterResponse>;
   verifyEmail: (email: string, code: string, workspaceName?: string) => Promise<void>;
+  acceptInvite: (payload: AcceptInviteRequest) => Promise<void>;
   logout: () => Promise<void>;
+  /** Keep header / invite emails in sync after Workspace settings rename. */
+  setWorkspace: (workspace: Workspace) => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -183,6 +188,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const acceptInvite = async (payload: AcceptInviteRequest) => {
+    setIsLoading(true);
+    try {
+      const response = await acceptInviteRequest(api, payload);
+      persistAuth(response);
+      setSessionExpiredOpen(false);
+      setUser(response.user);
+      setWorkspace(response.workspace);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = async () => {
     const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
     try {
@@ -197,6 +215,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setWorkspace(null);
       resetSessionExpiredFlag();
     }
+  };
+
+  const persistWorkspace = (next: Workspace) => {
+    localStorage.setItem(WORKSPACE_KEY, JSON.stringify(next));
+    setWorkspace(next);
   };
 
   const handleSessionExpiredOk = () => {
@@ -218,7 +241,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         register,
         verifyEmail,
+        acceptInvite,
         logout,
+        setWorkspace: persistWorkspace,
       }}
     >
       {children}

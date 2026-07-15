@@ -9,7 +9,7 @@ import { resetPassword } from "@supportflow/api-client";
 import { SupportFlowLogo } from "@/components/brand/SupportFlowLogo";
 import { api } from "@/lib/api";
 import { resetPasswordSchema, type ResetPasswordFormValues } from "@/lib/validations/auth";
-import { Button, Input, Label } from "@supportflow/ui";
+import { Button, Label, PasswordInput } from "@supportflow/ui";
 
 function ResetPasswordFormInner() {
   const router = useRouter();
@@ -65,16 +65,15 @@ function ResetPasswordFormInner() {
         )}
         <div>
           <Label htmlFor="newPassword">New password</Label>
-          <Input id="newPassword" type="password" autoComplete="new-password" {...register("newPassword")} />
+          <PasswordInput id="newPassword" autoComplete="new-password" {...register("newPassword")} />
           {errors.newPassword && (
             <p className="mt-1.5 text-sm text-red-600">{errors.newPassword.message}</p>
           )}
         </div>
         <div>
           <Label htmlFor="confirmPassword">Confirm password</Label>
-          <Input
+          <PasswordInput
             id="confirmPassword"
-            type="password"
             autoComplete="new-password"
             {...register("confirmPassword")}
           />

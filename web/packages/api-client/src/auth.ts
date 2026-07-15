@@ -14,8 +14,11 @@ import type {
   RegisterResponse,
   ResetPasswordRequest,
   VerifyEmailRequest,
+  InvitePreviewResponse,
+  AcceptInviteRequest,
   VerifyResetOtpRequest,
   VerifyResetOtpResponse,
+  Workspace,
 } from "./types";
 
 export async function login(client: ApiClient, credentials: LoginRequest): Promise<LoginResponse> {
@@ -42,6 +45,13 @@ export async function logout(client: ApiClient, payload: LogoutRequest): Promise
 
 export async function me(client: ApiClient): Promise<MeResponse> {
   return client.get<MeResponse>(API_ROUTES.auth.me);
+}
+
+export async function updateTenant(
+  client: ApiClient,
+  payload: { name: string },
+): Promise<Workspace> {
+  return client.patch<Workspace>(API_ROUTES.auth.tenant, payload);
 }
 
 export async function getRecoveryOptions(
@@ -77,4 +87,19 @@ export async function verifyEmail(
   payload: VerifyEmailRequest,
 ): Promise<LoginResponse> {
   return client.post<LoginResponse>(API_ROUTES.auth.verifyEmail, payload);
+}
+
+export async function previewInvite(
+  client: ApiClient,
+  token: string,
+): Promise<InvitePreviewResponse> {
+  const query = new URLSearchParams({ token });
+  return client.get<InvitePreviewResponse>(`${API_ROUTES.auth.invitePreview}?${query.toString()}`);
+}
+
+export async function acceptInvite(
+  client: ApiClient,
+  payload: AcceptInviteRequest,
+): Promise<LoginResponse> {
+  return client.post<LoginResponse>(API_ROUTES.auth.acceptInvite, payload);
 }
