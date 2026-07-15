@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SupportFlowLogo } from "@/components/brand/SupportFlowLogo";
 import { useAuth } from "@/hooks/useAuth";
 import { loginSchema, type LoginFormValues } from "@/lib/validations/auth";
-import { Button, Input, Label } from "@supportflow/ui";
+import { Button, Input, Label, PasswordInput } from "@supportflow/ui";
 
 function GoogleIcon() {
   return (
@@ -157,9 +157,8 @@ function LoginFormInner() {
 
         <div>
           <Label htmlFor="password">Password</Label>
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
             autoComplete="current-password"
             placeholder="Enter your password"
             aria-invalid={Boolean(errors.password)}

@@ -79,6 +79,7 @@ public static class DependencyInjection
         services.Configure<OtpOptions>(configuration.GetSection(OtpOptions.SectionName));
         services.Configure<EmailOptions>(configuration.GetSection(EmailOptions.SectionName));
         services.Configure<WhatsAppOptions>(configuration.GetSection(WhatsAppOptions.SectionName));
+        services.Configure<AppOptions>(configuration.GetSection(AppOptions.SectionName));
 
         services.AddScoped<JwtTokenService>();
         services.AddScoped<ILoginService, LoginService>();
@@ -87,10 +88,13 @@ public static class DependencyInjection
         services.AddScoped<IUserProfileService, UserProfileService>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IPasswordResetService, PasswordResetService>();
+        services.AddScoped<IMemberInviteService, MemberInviteService>();
 
         services.AddSingleton<ConsoleEmailOtpSender>();
         services.AddSingleton<ConsoleWhatsAppOtpSender>();
+        services.AddSingleton<ConsoleEmailSender>();
         services.AddScoped<SmtpEmailOtpSender>();
+        services.AddScoped<SmtpEmailSender>();
         services.AddScoped<MetaWhatsAppOtpSender>();
         services.AddScoped<IEmailOtpSender>(sp =>
         {
@@ -98,6 +102,13 @@ public static class DependencyInjection
             return string.Equals(options.Provider, "Smtp", StringComparison.OrdinalIgnoreCase)
                 ? sp.GetRequiredService<SmtpEmailOtpSender>()
                 : sp.GetRequiredService<ConsoleEmailOtpSender>();
+        });
+        services.AddScoped<IEmailSender>(sp =>
+        {
+            var options = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<EmailOptions>>().Value;
+            return string.Equals(options.Provider, "Smtp", StringComparison.OrdinalIgnoreCase)
+                ? sp.GetRequiredService<SmtpEmailSender>()
+                : sp.GetRequiredService<ConsoleEmailSender>();
         });
         services.AddScoped<IWhatsAppOtpSender>(sp =>
         {

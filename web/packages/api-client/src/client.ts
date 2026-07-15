@@ -25,6 +25,7 @@ const ANONYMOUS_AUTH_PATHS = new Set<string>([
   API_ROUTES.auth.resetPassword,
   API_ROUTES.auth.recoveryOptions,
   API_ROUTES.auth.verifyEmail,
+  API_ROUTES.auth.invitePreview,
 ]);
 
 export class ApiClient {
@@ -42,7 +43,8 @@ export class ApiClient {
       headers.set("Content-Type", "application/json");
     }
 
-    const isAnonymousAuth = ANONYMOUS_AUTH_PATHS.has(path);
+    const pathWithoutQuery = path.split("?")[0] ?? path;
+    const isAnonymousAuth = ANONYMOUS_AUTH_PATHS.has(pathWithoutQuery);
     // Do not attach a stale Bearer token to login/register/etc. — it confuses auth and 401 handling.
     const token = isAnonymousAuth ? null : this.options.getAccessToken?.();
     if (token) {
