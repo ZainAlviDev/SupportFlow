@@ -23,6 +23,27 @@ export type WorkspaceDetails = {
   createdAt: string;
 };
 
+export type InviteMemberRequest = {
+  email: string;
+  role: "Admin" | "Agent" | "Viewer";
+};
+
+export type InviteMemberResponse = {
+  inviteId: string;
+  email: string;
+  role: string;
+  expiresAt: string;
+};
+
+export type WorkspaceMember = {
+  userId?: string | null;
+  inviteId?: string | null;
+  email: string;
+  fullName: string;
+  role: string;
+  status: "Active" | "Pending" | string;
+};
+
 export async function createWorkspace(
   client: ApiClient,
   payload: CreateWorkspaceRequest,
@@ -39,4 +60,15 @@ export async function updateCurrentWorkspace(
   payload: UpdateWorkspaceRequest,
 ): Promise<WorkspaceDetails> {
   return client.patch<WorkspaceDetails>(API_ROUTES.workspaces.current, payload);
+}
+
+export async function listMembers(client: ApiClient): Promise<WorkspaceMember[]> {
+  return client.get<WorkspaceMember[]>(API_ROUTES.workspaces.members);
+}
+
+export async function inviteMember(
+  client: ApiClient,
+  payload: InviteMemberRequest,
+): Promise<InviteMemberResponse> {
+  return client.post<InviteMemberResponse>(API_ROUTES.workspaces.invite, payload);
 }

@@ -32,4 +32,6 @@ public sealed class CurrentUserService : ICurrentUserService
             return Guid.TryParse(value, out var tenantId) ? tenantId : null;
         }
     }
+
+    public string? Role => _httpContextAccessor.HttpContext?.User.FindFirstValue("role");
 }

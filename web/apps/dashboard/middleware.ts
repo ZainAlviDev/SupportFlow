@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const publicPaths = ["/login", "/register", "/forgot-password", "/verify-email"];
+const publicPaths = ["/login", "/register", "/forgot-password", "/verify-email", "/accept-invite"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -16,7 +16,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (isPublic && session && !pathname.startsWith("/forgot-password") && !pathname.startsWith("/verify-email")) {
+  if (
+    isPublic &&
+    session &&
+    !pathname.startsWith("/forgot-password") &&
+    !pathname.startsWith("/verify-email") &&
+    !pathname.startsWith("/accept-invite")
+  ) {
     // Allow post-register / post-verify landing on login without bouncing to inbox.
     const isPostAuthLanding =
       pathname.startsWith("/login") &&

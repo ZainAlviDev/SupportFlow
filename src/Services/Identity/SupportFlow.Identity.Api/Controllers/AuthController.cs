@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SupportFlow.Identity.Application.Identity.Commands.AcceptInvite;
 using SupportFlow.Identity.Application.Identity.Commands.ForgotPassword;
 using SupportFlow.Identity.Application.Identity.Commands.GetRecoveryOptions;
 using SupportFlow.Identity.Application.Identity.Commands.Login;
@@ -8,9 +9,11 @@ using SupportFlow.Identity.Application.Identity.Commands.Logout;
 using SupportFlow.Identity.Application.Identity.Commands.RefreshToken;
 using SupportFlow.Identity.Application.Identity.Commands.Register;
 using SupportFlow.Identity.Application.Identity.Commands.ResetPassword;
+using SupportFlow.Identity.Application.Identity.Commands.UpdateTenant;
 using SupportFlow.Identity.Application.Identity.Commands.VerifyEmail;
 using SupportFlow.Identity.Application.Identity.Commands.VerifyResetOtp;
 using SupportFlow.Identity.Application.Identity.Queries.GetMe;
+using SupportFlow.Identity.Application.Identity.Queries.PreviewInvite;
 using SupportFlow.Shared.Contracts.Auth;
 using SupportFlow.Shared.Contracts.Common;
 
@@ -146,6 +149,39 @@ public sealed class AuthController : ControllerBase
         return Ok(ApiResponse<LoginResponse>.Success(result));
     }
 
+    [AllowAnonymous]
+    [HttpGet("invites/preview")]
+    [ProducesResponseType(typeof(ApiResponse<InvitePreviewResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> PreviewInvite(
+        [FromQuery] string token,
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new PreviewInviteQuery(token), cancellationToken);
+        return Ok(ApiResponse<InvitePreviewResponse>.Success(result));
+    }
+
+    [AllowAnonymous]
+    [HttpPost("accept-invite")]
+    [ProducesResponseType(typeof(ApiResponse<LoginResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> AcceptInvite(
+        [FromBody] AcceptInviteRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new AcceptInviteCommand(
+                request.Token,
+                request.Password,
+                request.FullName,
+                request.PhoneNumber),
+            cancellationToken);
+
+        return Ok(ApiResponse<LoginResponse>.Success(result));
+    }
+
     [Authorize]
     [HttpGet("me")]
     [ProducesResponseType(typeof(ApiResponse<MeResponse>), StatusCodes.Status200OK)]
@@ -154,5 +190,18 @@ public sealed class AuthController : ControllerBase
     {
         var result = await _mediator.Send(new GetMeQuery(), cancellationToken);
         return Ok(ApiResponse<MeResponse>.Success(result));
+    }
+
+    [Authorize]
+    [HttpPatch("tenant")]
+    [ProducesResponseType(typeof(ApiResponse<AuthWorkspaceDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> UpdateTenant(
+        [FromBody] UpdateTenantRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new UpdateTenantCommand(request.Name), cancellationToken);
+        return Ok(ApiResponse<AuthWorkspaceDto>.Success(result));
     }
 }
