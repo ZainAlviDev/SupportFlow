@@ -13,12 +13,14 @@ builder.Services.AddCors(options =>
     options.AddPolicy("Dashboard", policy =>
         policy.WithOrigins(corsOrigins)
             .AllowAnyHeader()
-            .AllowAnyMethod());
+            .AllowAnyMethod()
+            .AllowCredentials());
 });
 builder.Services.AddReverseProxy().LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
 var app = builder.Build();
 
+app.UseWebSockets();
 app.UseCors("Dashboard");
 
 app.MapGet("/health", async (GatewayHealthService healthService, CancellationToken ct) =>
