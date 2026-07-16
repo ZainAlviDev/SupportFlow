@@ -98,7 +98,7 @@ export class ApiClient {
       const err = body as ApiError | null;
       if (response.status === 502 || response.status === 503) {
         throw new Error(
-          "API Gateway cannot reach a backend service. Make sure Identity (:5010) and Workspace (:5020) are running.",
+          "API Gateway cannot reach a backend service. For Inbox, ensure Conversation (:5030), Customer (:5050), and Gateway (:5000) are running.",
         );
       }
       throw new Error(err?.error?.message ?? `API error ${response.status}`);

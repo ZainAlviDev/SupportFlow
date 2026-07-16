@@ -23,6 +23,26 @@ export type {
   InviteMemberResponse,
   WorkspaceMember,
 } from "./workspaces";
+export {
+  listConversations,
+  getConversation,
+  createConversation,
+  updateConversation,
+  assignConversation,
+  unassignConversation,
+  changeConversationStatus,
+  listMessages,
+  sendMessage,
+} from "./conversations";
+export type {
+  Conversation,
+  Message,
+  ListConversationsParams,
+  CreateConversationPayload,
+  SendMessagePayload,
+} from "./conversations";
+export { listCustomers, createCustomer } from "./customers";
+export type { Customer, CreateCustomerPayload, ListCustomersParams } from "./customers";
 export { ApiClient, createApiClient } from "./client";
 export type { ApiClientOptions } from "./client";
 export type * from "./types";
