@@ -36,6 +36,70 @@ export type RegisterRequest = {
   password: string;
   fullName: string;
   workspaceName: string;
+  phoneNumber: string;
+};
+
+export type RegisterResponse = {
+  requiresEmailVerification: boolean;
+  email: string;
+  devOtp?: string | null;
+};
+
+export type RecoveryOptionsRequest = {
+  email: string;
+};
+
+export type RecoveryOptionsResponse = {
+  found: boolean;
+  email?: string | null;
+  phoneNumber?: string | null;
+};
+
+export type VerifyEmailRequest = {
+  email: string;
+  code: string;
+};
+
+export type InvitePreviewResponse = {
+  workspaceName: string;
+  email: string;
+  role: string;
+  expiresAt: string;
+  accountExists: boolean;
+};
+
+export type AcceptInviteRequest = {
+  token: string;
+  password?: string;
+  fullName?: string;
+  phoneNumber?: string;
+};
+
+export type ForgotPasswordRequest = {
+  channel: "email" | "whatsapp";
+  email?: string;
+  phoneNumber?: string;
+};
+
+export type ForgotPasswordResponse = {
+  sent: boolean;
+  devOtp?: string | null;
+};
+
+export type VerifyResetOtpRequest = {
+  channel: "email" | "whatsapp";
+  code: string;
+  email?: string;
+  phoneNumber?: string;
+};
+
+export type VerifyResetOtpResponse = {
+  resetToken: string;
+};
+
+export type ResetPasswordRequest = {
+  resetToken: string;
+  newPassword: string;
 };
 
 export type RefreshTokenRequest = {

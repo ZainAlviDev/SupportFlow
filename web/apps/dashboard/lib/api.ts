@@ -10,12 +10,13 @@ const WORKSPACE_KEY = "sf_workspace";
 
 /** Keeps middleware from hard-redirecting before the expiry modal is confirmed. */
 const SESSION_COOKIE = "sf_session";
-/** Slightly longer than the 1-minute access token so the modal can appear first. */
-const SESSION_MAX_AGE_SECONDS = 60 * 5;
+/** Match a long desk session so middleware does not drop the cookie early. */
+const SESSION_MAX_AGE_SECONDS = 60 * 60 * 12;
 
-export function persistSessionCookies(_accessToken: string, _expiresIn: number) {
+export function persistSessionCookies(_accessToken: string, expiresIn: number) {
   if (typeof document === "undefined") return;
-  document.cookie = `${SESSION_COOKIE}=1; path=/; max-age=${SESSION_MAX_AGE_SECONDS}; SameSite=Lax`;
+  const maxAge = Math.max(expiresIn || SESSION_MAX_AGE_SECONDS, 60);
+  document.cookie = `${SESSION_COOKIE}=1; path=/; max-age=${maxAge}; SameSite=Lax`;
 }
 
 export function clearSessionCookies() {
@@ -34,7 +35,7 @@ function clearStoredTokens() {
 export function getApiClient() {
   return createApiClient({
     baseUrl,
-    // 1-minute access token = hard session end (no silent refresh).
+    // Access token expiry is handled by JWT lifetime + optional local timer; silent refresh off.
     autoRefresh: false,
     getAccessToken: () => {
       if (typeof window === "undefined") return null;
@@ -53,7 +54,18 @@ export function getApiClient() {
     },
     onUnauthorized: () => {
       if (typeof window === "undefined") return;
+      // Ignore 401 while user is signing in / on public auth pages.
+      const path = window.location.pathname;
+      if (
+        path.startsWith("/login") ||
+        path.startsWith("/register") ||
+        path.startsWith("/forgot-password") ||
+        path.startsWith("/verify-email")
+      ) {
+        return;
+      }
       clearStoredTokens();
+      clearSessionCookies();
       notifySessionExpired();
     },
   });
