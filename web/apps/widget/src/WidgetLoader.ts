@@ -1,11 +1,10 @@
-/** Widget loader — Shadow DOM mount in Module 4 */
+/** Legacy helper — prefer window.sf('init', { apiKey }) via embed.tsx */
+export type { WidgetInitOptions as WidgetConfig } from "./types";
 
-export type WidgetConfig = {
-  apiKey: string;
-  position?: "bottom-right" | "bottom-left";
-};
-
-export function initWidget(config: WidgetConfig) {
-  console.log("[SupportFlow Widget] init", config);
-  // TODO Module 4: Shadow DOM + launcher button
+export function initWidget(config: { apiKey: string }) {
+  if (typeof window !== "undefined" && typeof window.sf === "function") {
+    window.sf("init", config);
+    return;
+  }
+  console.warn("[SupportFlow Widget] Call sf('init', config) after loading widget.js");
 }

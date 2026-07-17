@@ -23,6 +23,8 @@ export type {
   InviteMemberResponse,
   WorkspaceMember,
 } from "./workspaces";
+export { listApiKeys, createApiKey, revokeApiKey } from "./api-keys";
+export type { ApiKey, CreatedApiKey, CreateApiKeyPayload } from "./api-keys";
 export {
   listConversations,
   getConversation,
