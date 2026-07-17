@@ -52,6 +52,7 @@ public static class DependencyInjection
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IWorkspaceService, WorkspaceService>();
+        services.AddScoped<IApiKeyService, ApiKeyService>();
         services.AddHostedService<Seeding.WorkspaceDbMigrator>();
 
         return services;

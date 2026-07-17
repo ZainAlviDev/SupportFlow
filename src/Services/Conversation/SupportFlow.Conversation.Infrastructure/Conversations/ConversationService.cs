@@ -254,7 +254,7 @@ public sealed class ConversationService : IConversationService
         return new MessageListResult(items.Select(MapMessage).ToList(), page, pageSize, total);
     }
 
-    public async Task<MessageDto> SendMessageAsync(
+    public Task<MessageDto> SendMessageAsync(
         Guid tenantId,
         Guid conversationId,
         Guid? senderId,
@@ -262,16 +262,29 @@ public sealed class ConversationService : IConversationService
         bool isAiGenerated,
         CancellationToken cancellationToken)
     {
+        var senderType = isAiGenerated ? "AI" : "Agent";
+        return SendMessageAsync(tenantId, conversationId, senderId, body, senderType, isAiGenerated, cancellationToken);
+    }
+
+    public async Task<MessageDto> SendMessageAsync(
+        Guid tenantId,
+        Guid conversationId,
+        Guid? senderId,
+        string body,
+        string senderType,
+        bool isAiGenerated,
+        CancellationToken cancellationToken)
+    {
         var conversation = await FindConversationAsync(tenantId, conversationId, tracking: true, cancellationToken);
 
-        var senderType = isAiGenerated ? SenderType.AI : SenderType.Agent;
+        var parsedSender = ParseSenderType(senderType, isAiGenerated);
         var message = new MessageEntity(
             tenantId,
             conversationId,
-            senderType,
+            parsedSender,
             body,
             senderId,
-            isAiGenerated);
+            isAiGenerated || parsedSender == SenderType.AI);
 
         conversation.RecordMessage(message.CreatedAt);
         _dbContext.Messages.Add(message);
@@ -281,6 +294,45 @@ public sealed class ConversationService : IConversationService
         await _publisher.Publish(new MessageSentNotification(dto), cancellationToken);
         await _publisher.Publish(new ConversationUpdatedNotification(MapConversation(conversation)), cancellationToken);
         return dto;
+    }
+
+    public async Task<ConversationDto?> FindOpenByCustomerAsync(
+        Guid tenantId,
+        Guid customerId,
+        CancellationToken cancellationToken)
+    {
+        var conversation = await _dbContext.Conversations
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .Where(c =>
+                c.TenantId == tenantId
+                && c.CustomerId == customerId
+                && !c.IsDeleted
+                && c.Status == EntityStatus.Active
+                && (c.ConversationStatus == ConversationStatus.Open
+                    || c.ConversationStatus == ConversationStatus.Pending
+                    || c.ConversationStatus == ConversationStatus.Snoozed))
+            .OrderByDescending(c => c.LastMessageAt)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return conversation is null ? null : MapConversation(conversation);
+    }
+
+    private static SenderType ParseSenderType(string? senderType, bool isAiGenerated)
+    {
+        if (isAiGenerated)
+        {
+            return SenderType.AI;
+        }
+
+        if (string.IsNullOrWhiteSpace(senderType))
+        {
+            return SenderType.Agent;
+        }
+
+        return Enum.TryParse<SenderType>(senderType, ignoreCase: true, out var parsed)
+            ? parsed
+            : SenderType.Agent;
     }
 
     private MessageEntity AddSystemMessage(ConversationEntity conversation, string body, Guid? actorUserId)

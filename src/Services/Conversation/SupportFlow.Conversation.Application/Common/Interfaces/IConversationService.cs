@@ -83,4 +83,18 @@ public interface IConversationService
         string body,
         bool isAiGenerated,
         CancellationToken cancellationToken);
+
+    Task<MessageDto> SendMessageAsync(
+        Guid tenantId,
+        Guid conversationId,
+        Guid? senderId,
+        string body,
+        string senderType,
+        bool isAiGenerated,
+        CancellationToken cancellationToken);
+
+    Task<ConversationDto?> FindOpenByCustomerAsync(
+        Guid tenantId,
+        Guid customerId,
+        CancellationToken cancellationToken);
 }
