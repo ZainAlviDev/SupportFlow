@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SupportFlow Widget Embed Smoke Test</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, sans-serif;
+        background: #0f172a;
+        color: #e2e8f0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+      }
+      .card {
+        max-width: 520px;
+        padding: 28px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        border-radius: 16px;
+        background: rgba(30, 41, 59, 0.9);
+      }
+      code { color: #6ee7b7; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Embed smoke test</h1>
+      <p>
+        This page loads the built <code>widget.js</code> the same way a customer site would.
+        Set <code>window.__SF_API_KEY__</code> before load, or edit the script below.
+      </p>
+      <p>Open the launcher in the corner, send a message, then check the agent inbox.</p>
+    </div>
+
+    <script>
+      window.__SF_API_KEY__ = window.__SF_API_KEY__ || localStorage.getItem("sf_test_api_key") || "";
+      (function (w, d, s, o, f, js, fjs) {
+        w["SupportFlow"] = o;
+        w[o] =
+          w[o] ||
+          function () {
+            (w[o].q = w[o].q || []).push(arguments);
+          };
+        js = d.createElement(s);
+        fjs = d.getElementsByTagName(s)[0];
+        js.id = o;
+        js.src = f;
+        js.async = 1;
+        fjs.parentNode.insertBefore(js, fjs);
+      })(window, document, "script", "sf", "/widget.iife.js");
+
+      sf("init", {
+        apiKey: window.__SF_API_KEY__,
+        apiBaseUrl: "http://localhost:5000/api/v1",
+        signalrUrl: "http://localhost:5000",
+      });
+    </script>
+  </body>
+</html>

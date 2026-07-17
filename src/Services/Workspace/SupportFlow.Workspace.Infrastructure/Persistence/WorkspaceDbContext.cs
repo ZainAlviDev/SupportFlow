@@ -24,6 +24,7 @@ public class WorkspaceDbContext : DbContext
     }
 
     public DbSet<WorkspaceProfile> Workspaces => Set<WorkspaceProfile>();
+    public DbSet<TenantApiKey> ApiKeys => Set<TenantApiKey>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -45,6 +46,24 @@ public class WorkspaceDbContext : DbContext
 
             // Workspace row Id == TenantId (not ITenantEntity); isolate by Id.
             entity.HasQueryFilter(e => !e.IsDeleted && e.Id == _tenantContext.TenantId);
+        });
+
+        modelBuilder.Entity<TenantApiKey>(entity =>
+        {
+            entity.ToTable("TenantApiKeys");
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Name).HasMaxLength(120).IsRequired();
+            entity.Property(x => x.KeyPrefix).HasMaxLength(24).IsRequired();
+            entity.Property(x => x.KeyHash).HasMaxLength(64).IsRequired();
+            entity.Property(x => x.AllowedDomainsJson).HasColumnType("nvarchar(max)");
+            entity.Property(x => x.Status).HasConversion<int>();
+
+            entity.HasIndex(x => x.KeyHash).IsUnique();
+            entity.HasIndex(x => new { x.TenantId, x.IsDeleted });
+
+            entity.HasQueryFilter(e =>
+                !e.IsDeleted && (!_tenantContext.IsResolved || e.TenantId == _tenantContext.TenantId));
         });
     }
 }

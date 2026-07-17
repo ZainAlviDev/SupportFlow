@@ -166,6 +166,10 @@ export class ApiClient {
       body: data ? JSON.stringify(data) : undefined,
     });
   }
+
+  delete<T = void>(path: string) {
+    return this.request<T>(path, { method: "DELETE" });
+  }
 }
 
 export function createApiClient(options: ApiClientOptions) {

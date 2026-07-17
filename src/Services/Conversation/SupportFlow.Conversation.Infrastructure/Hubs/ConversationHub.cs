@@ -1,13 +1,15 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using SupportFlow.Conversation.Application.Common.Interfaces;
+using SupportFlow.Conversation.Infrastructure.Auth;
 using SupportFlow.Conversation.Infrastructure.SignalR;
 using SupportFlow.Shared.Contracts.Realtime;
 
 namespace SupportFlow.Conversation.Infrastructure.Hubs;
 
-[Authorize]
+[Authorize(AuthenticationSchemes = $"{JwtBearerDefaults.AuthenticationScheme},{ApiKeyAuthDefaults.Scheme}")]
 public sealed class ConversationHub : Hub
 {
     private readonly IConversationService _conversationService;
