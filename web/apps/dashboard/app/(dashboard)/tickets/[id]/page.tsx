@@ -1,11 +1,9 @@
-import { PlaceholderPage } from "@/components/layout/PlaceholderPage";
+"use client";
+
+import { useParams } from "next/navigation";
+import { TicketDetail } from "@/components/tickets/TicketDetail";
 
 export default function TicketDetailPage() {
-  return (
-    <PlaceholderPage
-      title="Ticket Detail"
-      description="View and manage a single ticket"
-      module="Module 5"
-    />
-  );
+  const params = useParams<{ id: string }>();
+  return <TicketDetail ticketId={params.id} />;
 }

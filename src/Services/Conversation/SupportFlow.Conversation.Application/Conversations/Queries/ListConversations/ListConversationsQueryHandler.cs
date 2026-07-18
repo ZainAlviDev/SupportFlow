@@ -29,6 +29,7 @@ public sealed class ListConversationsQueryHandler : IRequestHandler<ListConversa
             request.Status,
             request.Assignee,
             _currentUser.UserId,
+            request.CustomerId,
             request.Page,
             request.PageSize,
             cancellationToken);
