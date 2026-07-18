@@ -129,23 +129,32 @@ export default function InboxPage() {
 
   return (
     <div className="flex h-[calc(100dvh-4rem)] min-h-0 flex-col overflow-hidden">
-      <div className="flex shrink-0 items-center justify-between border-b border-line bg-white px-4 py-2 dark:border-charcoal-muted dark:bg-charcoal">
-        <div>
+      <div className="flex h-12 shrink-0 items-center justify-between border-b border-line bg-white px-4 dark:border-charcoal-muted dark:bg-charcoal">
+        <div className="flex items-center gap-2.5">
           <h1 className="text-base font-semibold text-charcoal dark:text-white">Inbox</h1>
-          <p className="flex items-center gap-1.5 text-xs text-ink-muted">
+          <span
+            className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium ${
+              isConnected
+                ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
+                : "bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300"
+            }`}
+          >
             <span
               className={`inline-block h-1.5 w-1.5 rounded-full ${
                 isConnected ? "bg-emerald-500" : "animate-pulse bg-amber-500"
               }`}
             />
             {isConnected ? "Live" : "Connecting…"}
-          </p>
+          </span>
         </div>
         <button
           type="button"
           onClick={() => void refresh()}
-          className="text-xs font-medium text-brand-700 hover:underline dark:text-brand-300"
+          className="flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5 text-xs font-medium text-ink-soft transition-colors hover:border-brand-500/40 hover:text-brand-700 dark:border-charcoal-muted dark:text-ink-faint dark:hover:text-brand-300"
         >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6" />
+          </svg>
           Refresh
         </button>
       </div>

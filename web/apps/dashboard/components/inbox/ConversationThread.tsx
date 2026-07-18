@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import type { Conversation, Message } from "@supportflow/api-client";
 import { ConversationActions } from "@/components/inbox/ConversationActions";
+import { AiLoader } from "@/components/ui/AiLoader";
 import { MessageBubble } from "@/components/inbox/MessageBubble";
 import { MessageComposer } from "@/components/inbox/MessageComposer";
 import { TypingIndicator } from "@/components/inbox/TypingIndicator";
@@ -115,7 +116,9 @@ export function ConversationThread({
 
       <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-3 py-4 sm:px-4">
         {isLoading && (
-          <p className="text-sm text-ink-muted">Loading messages…</p>
+          <div className="flex justify-center py-10">
+            <AiLoader size="sm" label="Loading messages" />
+          </div>
         )}
         {error && (
           <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">

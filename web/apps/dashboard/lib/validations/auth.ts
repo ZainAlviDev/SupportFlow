@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { getPhoneRule } from "@/lib/countryDialCodes";
 
 export const loginSchema = z.object({
   email: z
@@ -20,40 +21,57 @@ const phoneE164 = z
   .min(1, "Phone number is required")
   .regex(/^\+[1-9]\d{7,14}$/, "Use international format, e.g. +923001234567");
 
-export const registerSchema = z.object({
-  fullName: z
-    .string()
-    .trim()
-    .min(1, "Full name is required")
-    .min(2, "Full name must be at least 2 characters"),
-  email: z
-    .string()
-    .trim()
-    .min(1, "Email is required")
-    .email("Enter a valid email address"),
-  phoneCountryCode: z
-    .string()
-    .trim()
-    .regex(/^\+[1-9]\d{0,3}$/, "Select a country code"),
-  phoneNationalNumber: z
-    .string()
-    .trim()
-    .min(6, "Enter a valid phone number")
-    .regex(/^\d{6,14}$/, "Digits only, without country code"),
-  workspaceName: z
-    .string()
-    .trim()
-    .min(1, "Workspace name is required")
-    .min(2, "Workspace name must be at least 2 characters"),
-  password: z
-    .string()
-    .min(1, "Password is required")
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[A-Z]/, "Include at least one uppercase letter")
-    .regex(/[a-z]/, "Include at least one lowercase letter")
-    .regex(/[0-9]/, "Include at least one number")
-    .regex(/[^A-Za-z0-9]/, "Include at least one special character"),
-});
+export const registerSchema = z
+  .object({
+    fullName: z
+      .string()
+      .trim()
+      .min(1, "Full name is required")
+      .min(2, "Full name must be at least 2 characters"),
+    email: z
+      .string()
+      .trim()
+      .min(1, "Email is required")
+      .email("Enter a valid email address"),
+    phoneCountryCode: z
+      .string()
+      .trim()
+      .regex(/^\+[1-9]\d{0,3}$/, "Select a country code"),
+    phoneNationalNumber: z
+      .string()
+      .trim()
+      .min(1, "Phone number is required")
+      .regex(/^\d+$/, "Digits only, without country code"),
+    workspaceName: z
+      .string()
+      .trim()
+      .min(1, "Workspace name is required")
+      .min(2, "Workspace name must be at least 2 characters"),
+    password: z
+      .string()
+      .min(1, "Password is required")
+      .min(8, "Password must be at least 8 characters")
+      .regex(/[A-Z]/, "Include at least one uppercase letter")
+      .regex(/[a-z]/, "Include at least one lowercase letter")
+      .regex(/[0-9]/, "Include at least one number")
+      .regex(/[^A-Za-z0-9]/, "Include at least one special character"),
+  })
+  .superRefine((values, ctx) => {
+    const digits = values.phoneNationalNumber.trim();
+    if (!/^\d+$/.test(digits)) return; // digits-only error already shown
+
+    const rule = getPhoneRule(values.phoneCountryCode);
+    if (digits.length < rule.minLen || digits.length > rule.maxLen) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["phoneNationalNumber"],
+        message:
+          rule.minLen === rule.maxLen
+            ? `${rule.label} numbers are ${rule.minLen} digits, e.g. ${rule.example}`
+            : `${rule.label} numbers are ${rule.minLen}–${rule.maxLen} digits, e.g. ${rule.example}`,
+      });
+    }
+  });
 
 export type RegisterFormValues = z.infer<typeof registerSchema>;
 

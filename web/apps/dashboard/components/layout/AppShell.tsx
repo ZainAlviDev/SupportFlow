@@ -21,7 +21,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             className="absolute inset-0 bg-black/40"
             onClick={() => setMobileNavOpen(false)}
           />
-          <div className="absolute inset-y-0 left-0 w-64 shadow-xl">
+          <div className="absolute inset-y-0 left-0 w-[268px] shadow-xl">
             <Sidebar onNavigate={() => setMobileNavOpen(false)} />
           </div>
         </div>

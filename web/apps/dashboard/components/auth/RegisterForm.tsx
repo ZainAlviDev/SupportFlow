@@ -9,7 +9,7 @@ import { SupportFlowLogo } from "@/components/brand/SupportFlowLogo";
 import { useAuth } from "@/hooks/useAuth";
 import { clearSessionCookies } from "@/lib/api";
 import { registerSchema, toE164, type RegisterFormValues } from "@/lib/validations/auth";
-import { COUNTRY_DIAL_CODES } from "@/lib/countryDialCodes";
+import { COUNTRY_DIAL_CODES, getPhoneRule } from "@/lib/countryDialCodes";
 import { Button, Input, Label, PasswordInput } from "@supportflow/ui";
 
 type Step = 1 | 2;
@@ -25,6 +25,7 @@ export function RegisterForm() {
     handleSubmit,
     trigger,
     getValues,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -38,6 +39,10 @@ export function RegisterForm() {
     },
     mode: "onBlur",
   });
+
+  const phoneRule = getPhoneRule(watch("phoneCountryCode"));
+  const countryField = register("phoneCountryCode");
+  const phoneField = register("phoneNationalNumber");
 
   const goToWorkspaceStep = async () => {
     setApiError(null);
@@ -156,7 +161,14 @@ export function RegisterForm() {
                 <select
                   id="phoneCountryCode"
                   className="h-11 rounded-lg border border-line bg-white px-2 text-sm text-ink"
-                  {...register("phoneCountryCode")}
+                  {...countryField}
+                  onChange={(event) => {
+                    void countryField.onChange(event);
+                    // Re-check the number against the new country's length rule.
+                    if (getValues("phoneNationalNumber")) {
+                      void trigger("phoneNationalNumber");
+                    }
+                  }}
                 >
                   {COUNTRY_DIAL_CODES.map((item) => (
                     <option key={item.code} value={item.code}>
@@ -168,14 +180,22 @@ export function RegisterForm() {
                   id="phoneNationalNumber"
                   inputMode="numeric"
                   autoComplete="tel-national"
-                  placeholder="3001234567"
+                  placeholder={phoneRule.example}
+                  maxLength={phoneRule.maxLen}
                   aria-invalid={Boolean(errors.phoneNationalNumber)}
                   className={
                     errors.phoneNationalNumber
                       ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
                       : ""
                   }
-                  {...register("phoneNationalNumber")}
+                  {...phoneField}
+                  onChange={(event) => {
+                    // Digits only, hard-capped at the selected country's max length.
+                    event.target.value = event.target.value
+                      .replace(/\D/g, "")
+                      .slice(0, phoneRule.maxLen);
+                    void phoneField.onChange(event);
+                  }}
                 />
               </div>
               {(errors.phoneCountryCode || errors.phoneNationalNumber) && (
@@ -184,7 +204,9 @@ export function RegisterForm() {
                 </p>
               )}
               <p className="mt-1.5 text-xs text-ink-faint">
-                Saved on your account for WhatsApp password recovery.
+                {phoneRule.minLen === phoneRule.maxLen
+                  ? `${phoneRule.minLen} digits without country code · saved for WhatsApp password recovery.`
+                  : `${phoneRule.minLen}–${phoneRule.maxLen} digits without country code · saved for WhatsApp password recovery.`}
               </p>
             </div>
 
