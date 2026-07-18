@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,9 +12,11 @@ using SupportFlow.Conversation.Application.Common.Events;
 using SupportFlow.Conversation.Application.Common.Interfaces;
 using SupportFlow.Conversation.Infrastructure.Auth;
 using SupportFlow.Conversation.Infrastructure.Conversations;
+using SupportFlow.Conversation.Infrastructure.Customers;
 using SupportFlow.Conversation.Infrastructure.Persistence;
 using SupportFlow.Conversation.Infrastructure.Seeding;
 using SupportFlow.Conversation.Infrastructure.SignalR;
+using SupportFlow.Conversation.Infrastructure.Widget;
 using SupportFlow.Shared.Infrastructure;
 
 namespace SupportFlow.Conversation.Infrastructure;
@@ -71,14 +74,33 @@ public static class DependencyInjection
                         return Task.CompletedTask;
                     }
                 };
-            });
+            })
+            .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(
+                ApiKeyAuthDefaults.Scheme,
+                _ => { });
 
         services.AddAuthorization();
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IConversationService, ConversationService>();
+        services.AddScoped<IWidgetService, WidgetService>();
         services.AddScoped<INotificationHandler<MessageSentNotification>, MessageSentNotificationHandler>();
         services.AddScoped<INotificationHandler<ConversationUpdatedNotification>, ConversationUpdatedNotificationHandler>();
+
+        var workspaceBaseUrl = configuration["Services:Workspace"] ?? "http://localhost:5020";
+        var customerBaseUrl = configuration["Services:Customer"] ?? "http://localhost:5050";
+
+        services.AddHttpClient<IApiKeyValidator, WorkspaceApiKeyValidator>(client =>
+        {
+            client.BaseAddress = new Uri(workspaceBaseUrl.TrimEnd('/') + "/");
+            client.Timeout = TimeSpan.FromSeconds(10);
+        });
+
+        services.AddHttpClient<ICustomerClient, CustomerClient>(client =>
+        {
+            client.BaseAddress = new Uri(customerBaseUrl.TrimEnd('/') + "/");
+            client.Timeout = TimeSpan.FromSeconds(10);
+        });
 
         var environment = configuration["ASPNETCORE_ENVIRONMENT"]
             ?? Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")

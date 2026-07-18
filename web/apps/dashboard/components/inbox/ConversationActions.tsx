@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   assignConversation,
   changeConversationStatus,
+  createTicket,
   unassignConversation,
   type Conversation,
 } from "@supportflow/api-client";
@@ -15,6 +17,7 @@ const STATUSES = ["Open", "Pending", "Resolved", "Snoozed"] as const;
 
 type ConversationActionsProps = {
   conversation: Conversation;
+  subjectHint?: string;
   onUpdated: (conversation: Conversation) => void;
 };
 
@@ -28,7 +31,20 @@ function formatAssignee(assigneeId: string | null | undefined, currentUserId: st
   return `${assigneeId.slice(0, 8)}…`;
 }
 
-export function ConversationActions({ conversation, onUpdated }: ConversationActionsProps) {
+function ticketSubjectFromHint(hint: string | undefined, conversationId: string) {
+  const trimmed = hint?.trim().replace(/\s+/g, " ");
+  if (!trimmed) {
+    return `Conversation ${conversationId.slice(0, 8)}`;
+  }
+  return trimmed.length > 120 ? `${trimmed.slice(0, 117)}…` : trimmed;
+}
+
+export function ConversationActions({
+  conversation,
+  subjectHint,
+  onUpdated,
+}: ConversationActionsProps) {
+  const router = useRouter();
   const { user } = useAuth();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +62,25 @@ export function ConversationActions({ conversation, onUpdated }: ConversationAct
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to update conversation.");
     } finally {
+      setBusy(false);
+    }
+  };
+
+  const onCreateTicket = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const ticket = await createTicket(api, {
+        customerId: conversation.customerId,
+        conversationId: conversation.id,
+        subject: ticketSubjectFromHint(subjectHint, conversation.id),
+        description: subjectHint?.trim() || undefined,
+        assigneeId: user?.id,
+        priority: "Medium",
+      });
+      router.push(`/tickets/${ticket.id}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to create ticket.");
       setBusy(false);
     }
   };
@@ -72,8 +107,8 @@ export function ConversationActions({ conversation, onUpdated }: ConversationAct
   };
 
   return (
-    <div className="flex flex-col items-end gap-2">
-      <div className="flex flex-wrap items-center justify-end gap-2">
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <label className="sr-only" htmlFor={`status-${conversation.id}`}>
           Status
         </label>
@@ -125,9 +160,19 @@ export function ConversationActions({ conversation, onUpdated }: ConversationAct
             Unassign
           </Button>
         )}
+
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          disabled={busy}
+          onClick={() => void onCreateTicket()}
+        >
+          Create ticket
+        </Button>
       </div>
 
-      <p className="text-[11px] text-ink-muted">
+      <p className="text-left text-[11px] text-ink-muted">
         Assignee:{" "}
         <span className="font-medium text-ink-soft dark:text-ink-faint">
           {formatAssignee(conversation.assigneeId, user?.id)}
@@ -146,7 +191,7 @@ export function ConversationActions({ conversation, onUpdated }: ConversationAct
         ) : null}
       </p>
 
-      {error && <p className="max-w-xs text-right text-xs text-red-600">{error}</p>}
+      {error && <p className="max-w-md text-xs text-red-600">{error}</p>}
     </div>
   );
 }

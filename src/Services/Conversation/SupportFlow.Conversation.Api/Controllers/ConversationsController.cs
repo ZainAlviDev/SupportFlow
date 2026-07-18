@@ -29,12 +29,13 @@ public sealed class ConversationsController : ControllerBase
     public async Task<IActionResult> List(
         [FromQuery] string? status,
         [FromQuery] string? assignee,
+        [FromQuery] Guid? customerId,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20,
         CancellationToken cancellationToken = default)
     {
         var result = await _mediator.Send(
-            new ListConversationsQuery(status, assignee, page, pageSize),
+            new ListConversationsQuery(status, assignee, customerId, page, pageSize),
             cancellationToken);
 
         return Ok(ApiResponse<IReadOnlyList<ConversationDto>>.Success(

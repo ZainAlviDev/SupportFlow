@@ -65,7 +65,8 @@ export function getApiClient() {
         return;
       }
       clearStoredTokens();
-      clearSessionCookies();
+      // Keep the sf_session cookie until the user confirms the expiry dialog;
+      // clearing it here makes the middleware hard-redirect before the modal shows.
       notifySessionExpired();
     },
   });

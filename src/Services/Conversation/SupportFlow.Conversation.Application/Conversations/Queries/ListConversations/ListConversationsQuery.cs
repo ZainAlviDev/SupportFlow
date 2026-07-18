@@ -6,5 +6,6 @@ namespace SupportFlow.Conversation.Application.Conversations.Queries.ListConvers
 public sealed record ListConversationsQuery(
     string? Status,
     string? Assignee,
+    Guid? CustomerId,
     int Page,
     int PageSize) : IRequest<ConversationListResult>;

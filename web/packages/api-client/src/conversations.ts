@@ -29,6 +29,7 @@ export type Message = {
 export type ListConversationsParams = {
   status?: string;
   assignee?: string;
+  customerId?: string;
   page?: number;
   pageSize?: number;
 };
@@ -63,6 +64,7 @@ export async function listConversations(
   const query = toQuery({
     status: params.status,
     assignee: params.assignee,
+    customerId: params.customerId,
     page: params.page ?? 1,
     pageSize: params.pageSize ?? 50,
   });

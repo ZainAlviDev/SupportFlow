@@ -2,16 +2,14 @@ using SupportFlow.Gateway.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
-    ?? ["http://localhost:3000"];
-
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<GatewayHealthService>();
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {
+    // Reflect request origin so dashboard cookies and widget embeds both work.
     options.AddPolicy("Dashboard", policy =>
-        policy.WithOrigins(corsOrigins)
+        policy.SetIsOriginAllowed(_ => true)
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials());

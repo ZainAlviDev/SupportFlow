@@ -21,6 +21,7 @@ public interface IConversationService
         string? status,
         string? assignee,
         Guid? currentUserId,
+        Guid? customerId,
         int page,
         int pageSize,
         CancellationToken cancellationToken);
@@ -82,5 +83,19 @@ public interface IConversationService
         Guid? senderId,
         string body,
         bool isAiGenerated,
+        CancellationToken cancellationToken);
+
+    Task<MessageDto> SendMessageAsync(
+        Guid tenantId,
+        Guid conversationId,
+        Guid? senderId,
+        string body,
+        string senderType,
+        bool isAiGenerated,
+        CancellationToken cancellationToken);
+
+    Task<ConversationDto?> FindOpenByCustomerAsync(
+        Guid tenantId,
+        Guid customerId,
         CancellationToken cancellationToken);
 }

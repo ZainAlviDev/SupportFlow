@@ -20,4 +20,27 @@ public interface ICustomerService
         CancellationToken cancellationToken);
 
     Task<CustomerDto?> GetByIdAsync(Guid tenantId, Guid customerId, CancellationToken cancellationToken);
+
+    Task<CustomerDto> UpdateAsync(
+        Guid tenantId,
+        Guid customerId,
+        Guid? updatedBy,
+        string? name,
+        string? email,
+        string? username,
+        IReadOnlyList<string>? tags,
+        IReadOnlyDictionary<string, string>? metadata,
+        CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<CustomerNoteDto>> ListNotesAsync(
+        Guid tenantId,
+        Guid customerId,
+        CancellationToken cancellationToken);
+
+    Task<CustomerNoteDto> AddNoteAsync(
+        Guid tenantId,
+        Guid customerId,
+        Guid authorId,
+        string body,
+        CancellationToken cancellationToken);
 }
