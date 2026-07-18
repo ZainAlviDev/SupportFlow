@@ -10,7 +10,11 @@ export function middleware(request: NextRequest) {
 
   const isPublic = publicPaths.some((p) => pathname.startsWith(p));
   const isRoot = pathname === "/";
-  const isDashboard = !isPublic && !pathname.startsWith("/_next");
+  const isStaticAsset =
+    pathname.startsWith("/brand/") ||
+    pathname.startsWith("/_next") ||
+    /\.(?:svg|png|jpg|jpeg|gif|webp|ico)$/i.test(pathname);
+  const isDashboard = !isPublic && !isStaticAsset;
 
   if ((isDashboard || isRoot) && !session) {
     return NextResponse.redirect(new URL("/login", request.url));
@@ -41,5 +45,8 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  // Skip Next internals, favicon, and public brand/static image assets.
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|brand/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+  ],
 };

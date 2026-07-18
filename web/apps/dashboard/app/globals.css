@@ -25,3 +25,34 @@ body {
   background: var(--color-surface-soft);
   font-family: var(--font-sans), "Segoe UI", system-ui, sans-serif;
 }
+
+/* AI loader */
+@keyframes sf-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes sf-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+}
+
+.sf-shimmer-text {
+  background: linear-gradient(90deg, #9ca3af 0%, #10b981 45%, #9ca3af 90%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: sf-shimmer 2s linear infinite;
+}

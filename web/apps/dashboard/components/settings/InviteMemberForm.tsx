@@ -58,11 +58,20 @@ export function InviteMemberForm({ onInvited }: InviteMemberFormProps) {
   return (
     <Card className="dark:border-charcoal-muted dark:bg-charcoal">
       <CardContent className="space-y-4 py-6">
-        <div>
-          <h2 className="text-sm font-semibold text-charcoal dark:text-white">Invite member</h2>
-          <p className="mt-1 text-xs text-ink-muted">
-            They&apos;ll receive an email with a link to join this workspace.
-          </p>
+        <div className="flex items-start gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M19 8v6m3-3h-6" />
+            </svg>
+          </span>
+          <div>
+            <h2 className="text-sm font-semibold text-charcoal dark:text-white">Invite member</h2>
+            <p className="mt-0.5 text-xs text-ink-muted">
+              They&apos;ll receive an email with a link to join this workspace.
+            </p>
+          </div>
         </div>
 
         {apiError && (

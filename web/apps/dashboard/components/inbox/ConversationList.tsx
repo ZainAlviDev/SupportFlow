@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import type { Conversation } from "@supportflow/api-client";
 import { Button, Input, Label } from "@supportflow/ui";
+import { AiLoader } from "@/components/ui/AiLoader";
 import { useAuth } from "@/hooks/useAuth";
 import {
   useInboxStore,
@@ -178,7 +179,9 @@ export function ConversationList({
 
       <div className="min-h-0 flex-1 overflow-y-auto">
         {isLoading && (
-          <p className="px-3 py-4 text-sm text-ink-muted">Loading conversations…</p>
+          <div className="flex justify-center px-3 py-10">
+            <AiLoader size="sm" label="Loading conversations" />
+          </div>
         )}
         {error && (
           <div className="m-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
@@ -186,9 +189,17 @@ export function ConversationList({
           </div>
         )}
         {!isLoading && conversations.length === 0 && (
-          <p className="px-3 py-4 text-sm text-ink-muted">
-            No conversations yet. Start one or wait for widget traffic.
-          </p>
+          <div className="flex flex-col items-center px-4 py-10 text-center">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-surface-soft dark:bg-charcoal-soft">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="text-ink-faint" aria-hidden>
+                <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 1 1 16.1-3.8Z" />
+              </svg>
+            </span>
+            <p className="mt-3 text-sm font-medium text-charcoal dark:text-white">No conversations yet</p>
+            <p className="mt-1 text-xs text-ink-muted">
+              Start one with “New” or wait for widget traffic.
+            </p>
+          </div>
         )}
         <ul className="divide-y divide-line dark:divide-charcoal-muted">
           {conversations.map((conversation) => {

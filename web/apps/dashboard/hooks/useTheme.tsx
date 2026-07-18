@@ -8,6 +8,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { AiLoader } from "@/components/ui/AiLoader";
 
 type Theme = "light" | "dark";
 
@@ -55,7 +56,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [setTheme, theme]);
 
   if (!ready) {
-    return <div className="min-h-screen bg-muted" />;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-muted">
+        <AiLoader size="lg" label="SupportFlow" />
+      </div>
+    );
   }
 
   return (
