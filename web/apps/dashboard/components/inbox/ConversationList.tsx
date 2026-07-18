@@ -25,16 +25,24 @@ type ConversationListProps = {
 function formatRelative(value: string) {
   try {
     const date = new Date(value);
-    return new Intl.DateTimeFormat(undefined, {
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    }).format(date);
+    const diffMs = Date.now() - date.getTime();
+    const minutes = Math.floor(diffMs / 60000);
+    if (minutes < 1) return "now";
+    if (minutes < 60) return `${minutes}m`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h`;
+    return new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(date);
   } catch {
     return "";
   }
 }
+
+const STATUS_DOTS: Record<string, string> = {
+  Open: "bg-sky-500",
+  Pending: "bg-amber-500",
+  Resolved: "bg-emerald-500",
+  Snoozed: "bg-violet-500",
+};
 
 const STATUS_OPTIONS: { value: InboxStatusFilter; label: string }[] = [
   { value: "all", label: "All" },
@@ -185,47 +193,68 @@ export function ConversationList({
         <ul className="divide-y divide-line dark:divide-charcoal-muted">
           {conversations.map((conversation) => {
             const active = conversation.id === selectedId;
+            const mine = Boolean(user?.id && conversation.assigneeId === user.id);
+            const customerShort = conversation.customerId.slice(0, 8);
             return (
               <li key={conversation.id}>
                 <button
                   type="button"
                   onClick={() => onSelect(conversation.id)}
-                  className={`w-full px-3 py-3 text-left transition-colors ${
+                  aria-current={active ? "true" : undefined}
+                  className={`relative w-full px-3 py-3 text-left transition-colors ${
                     active
                       ? "bg-brand-50 dark:bg-charcoal-muted"
                       : "hover:bg-surface-soft dark:hover:bg-charcoal-soft"
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-charcoal dark:text-white">
-                        {conversation.customerId.slice(0, 8)}…
-                      </p>
-                      <p className="mt-0.5 text-xs text-ink-muted">
-                        {conversation.channel} · {conversation.status}
-                        {!conversation.assigneeId
-                          ? " · Unassigned"
-                          : user?.id && conversation.assigneeId === user.id
-                            ? " · Mine"
-                            : " · Assigned"}
-                      </p>
-                    </div>
-                    <span className="shrink-0 text-[11px] text-ink-faint">
-                      {formatRelative(conversation.lastMessageAt)}
-                    </span>
-                  </div>
-                  {conversation.tags.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {conversation.tags.slice(0, 3).map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded bg-line-soft px-1.5 py-0.5 text-[10px] text-ink-soft dark:bg-charcoal-soft dark:text-ink-faint"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
+                  {active && (
+                    <span className="absolute inset-y-0 left-0 w-0.5 bg-brand-500" aria-hidden />
                   )}
+                  <div className="flex items-start gap-2.5">
+                    <div className="relative shrink-0">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-line-soft text-xs font-bold uppercase text-ink-soft dark:bg-charcoal-soft dark:text-ink-faint">
+                        {customerShort.slice(0, 2)}
+                      </div>
+                      <span
+                        className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white dark:border-charcoal ${
+                          STATUS_DOTS[conversation.status] ?? "bg-ink-faint"
+                        }`}
+                        title={conversation.status}
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-baseline justify-between gap-2">
+                        <p className="truncate text-sm font-medium text-charcoal dark:text-white">
+                          Customer {customerShort}
+                        </p>
+                        <span className="shrink-0 text-[11px] text-ink-faint">
+                          {formatRelative(conversation.lastMessageAt)}
+                        </span>
+                      </div>
+                      <p className="mt-0.5 truncate text-xs text-ink-muted">
+                        {conversation.channel}
+                        {!conversation.assigneeId ? (
+                          <span className="text-amber-600 dark:text-amber-400"> · Unassigned</span>
+                        ) : mine ? (
+                          " · Mine"
+                        ) : (
+                          " · Assigned"
+                        )}
+                      </p>
+                      {conversation.tags.length > 0 && (
+                        <div className="mt-1.5 flex flex-wrap gap-1">
+                          {conversation.tags.slice(0, 3).map((tag) => (
+                            <span
+                              key={tag}
+                              className="rounded bg-line-soft px-1.5 py-0.5 text-[10px] text-ink-soft dark:bg-charcoal-soft dark:text-ink-faint"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </button>
               </li>
             );

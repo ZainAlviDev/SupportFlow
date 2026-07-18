@@ -21,6 +21,7 @@ public interface IConversationService
         string? status,
         string? assignee,
         Guid? currentUserId,
+        Guid? customerId,
         int page,
         int pageSize,
         CancellationToken cancellationToken);

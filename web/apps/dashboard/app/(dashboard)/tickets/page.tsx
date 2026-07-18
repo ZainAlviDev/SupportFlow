@@ -1,11 +1,7 @@
-import { PlaceholderPage } from "@/components/layout/PlaceholderPage";
+"use client";
+
+import { TicketsList } from "@/components/tickets/TicketsList";
 
 export default function TicketsPage() {
-  return (
-    <PlaceholderPage
-      title="Tickets"
-      description="Support ticket management"
-      module="Module 5"
-    />
-  );
+  return <TicketsList />;
 }

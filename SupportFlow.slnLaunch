@@ -4,28 +4,33 @@
     "Projects": [
       {
         "Path": "src\\Gateway\\SupportFlow.Gateway\\SupportFlow.Gateway.csproj",
-        "Action": "Start",
-        "DebugTarget": "http"
+        "Action": "StartWithoutDebugging",
+        "DebugTarget": "IIS Express"
       },
       {
         "Path": "src\\Services\\Identity\\SupportFlow.Identity.Api\\SupportFlow.Identity.Api.csproj",
-        "Action": "Start",
-        "DebugTarget": "http"
+        "Action": "StartWithoutDebugging",
+        "DebugTarget": "IIS Express"
       },
       {
         "Path": "src\\Services\\Workspace\\SupportFlow.Workspace.Api\\SupportFlow.Workspace.Api.csproj",
-        "Action": "Start",
-        "DebugTarget": "http"
+        "Action": "StartWithoutDebugging",
+        "DebugTarget": "IIS Express"
       },
       {
         "Path": "src\\Services\\Conversation\\SupportFlow.Conversation.Api\\SupportFlow.Conversation.Api.csproj",
-        "Action": "Start",
-        "DebugTarget": "http"
+        "Action": "StartWithoutDebugging",
+        "DebugTarget": "IIS Express"
       },
       {
         "Path": "src\\Services\\Customer\\SupportFlow.Customer.Api\\SupportFlow.Customer.Api.csproj",
-        "Action": "Start",
-        "DebugTarget": "http"
+        "Action": "StartWithoutDebugging",
+        "DebugTarget": "IIS Express"
+      },
+      {
+        "Path": "src\\Services\\Ticket\\SupportFlow.Ticket.Api\\SupportFlow.Ticket.Api.csproj",
+        "Action": "StartWithoutDebugging",
+        "DebugTarget": "IIS Express"
       }
     ]
   }
