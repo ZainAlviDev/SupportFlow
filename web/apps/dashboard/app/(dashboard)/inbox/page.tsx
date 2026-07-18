@@ -132,11 +132,13 @@ export default function InboxPage() {
       <div className="flex shrink-0 items-center justify-between border-b border-line bg-white px-4 py-2 dark:border-charcoal-muted dark:bg-charcoal">
         <div>
           <h1 className="text-base font-semibold text-charcoal dark:text-white">Inbox</h1>
-          <p className="text-xs text-ink-muted">
-            Real-time agent replies ·{" "}
-            <span className={isConnected ? "text-emerald-600" : "text-amber-600"}>
-              {isConnected ? "Live" : "Connecting…"}
-            </span>
+          <p className="flex items-center gap-1.5 text-xs text-ink-muted">
+            <span
+              className={`inline-block h-1.5 w-1.5 rounded-full ${
+                isConnected ? "bg-emerald-500" : "animate-pulse bg-amber-500"
+              }`}
+            />
+            {isConnected ? "Live" : "Connecting…"}
           </p>
         </div>
         <button
@@ -154,37 +156,43 @@ export default function InboxPage() {
         </div>
       )}
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)_280px]">
-        <ConversationList
-          conversations={conversations}
-          isLoading={listLoading}
-          error={listError}
-          selectedId={selectedConversationId}
-          onSelect={setSelectedConversationId}
-          onCreate={async ({ username, initialMessage }) => {
-            const created = await startConversationForCustomer({
-              username,
-              initialMessage,
-            });
-            setSelectedConversationId(created.id);
-          }}
-        />
+      <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[300px_minmax(0,1fr)] xl:grid-cols-[300px_minmax(0,1fr)_300px]">
+        {/* Mobile: master-detail — list hides when a thread is open. */}
+        <div className={`${selectedConversationId ? "hidden md:flex" : "flex"} min-h-0 flex-col`}>
+          <ConversationList
+            conversations={conversations}
+            isLoading={listLoading}
+            error={listError}
+            selectedId={selectedConversationId}
+            onSelect={setSelectedConversationId}
+            onCreate={async ({ username, initialMessage }) => {
+              const created = await startConversationForCustomer({
+                username,
+                initialMessage,
+              });
+              setSelectedConversationId(created.id);
+            }}
+          />
+        </div>
 
-        <ConversationThread
-          conversation={selectedConversation}
-          messages={messages}
-          isLoading={messagesLoading}
-          isSending={isSending}
-          error={messagesError}
-          typingNames={typingNames}
-          onSend={async (body) => {
-            const sent = await sendMessage(body);
-            touchConversation(sent.conversationId, sent.createdAt);
-          }}
-          onTypingStart={handleTypingStart}
-          onTypingStop={handleTypingStop}
-          onConversationUpdated={upsertConversation}
-        />
+        <div className={`${selectedConversationId ? "flex" : "hidden md:flex"} min-h-0 flex-col`}>
+          <ConversationThread
+            conversation={selectedConversation}
+            messages={messages}
+            isLoading={messagesLoading}
+            isSending={isSending}
+            error={messagesError}
+            typingNames={typingNames}
+            onBack={() => setSelectedConversationId(null)}
+            onSend={async (body) => {
+              const sent = await sendMessage(body);
+              touchConversation(sent.conversationId, sent.createdAt);
+            }}
+            onTypingStart={handleTypingStart}
+            onTypingStop={handleTypingStop}
+            onConversationUpdated={upsertConversation}
+          />
+        </div>
 
         <CustomerSidebar conversation={selectedConversation} />
       </div>

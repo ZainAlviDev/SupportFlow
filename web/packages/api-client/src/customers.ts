@@ -7,6 +7,8 @@ export type Customer = {
   name?: string | null;
   email?: string | null;
   username?: string | null;
+  tags: string[];
+  metadata: Record<string, string>;
   firstSeenAt: string;
   lastSeenAt: string;
   createdAt: string;
@@ -23,6 +25,22 @@ export type ListCustomersParams = {
   search?: string;
   page?: number;
   pageSize?: number;
+};
+
+export type UpdateCustomerPayload = {
+  name?: string;
+  email?: string;
+  username?: string;
+  tags?: string[];
+  metadata?: Record<string, string>;
+};
+
+export type CustomerNote = {
+  id: string;
+  customerId: string;
+  authorId: string;
+  body: string;
+  createdAt: string;
 };
 
 function toQuery(params: Record<string, string | number | undefined>) {
@@ -53,4 +71,31 @@ export async function createCustomer(
   payload: CreateCustomerPayload,
 ): Promise<Customer> {
   return client.post<Customer>(API_ROUTES.customers, payload);
+}
+
+export async function getCustomer(client: ApiClient, customerId: string): Promise<Customer> {
+  return client.get<Customer>(`${API_ROUTES.customers}/${customerId}`);
+}
+
+export async function updateCustomer(
+  client: ApiClient,
+  customerId: string,
+  payload: UpdateCustomerPayload,
+): Promise<Customer> {
+  return client.patch<Customer>(`${API_ROUTES.customers}/${customerId}`, payload);
+}
+
+export async function listCustomerNotes(
+  client: ApiClient,
+  customerId: string,
+): Promise<CustomerNote[]> {
+  return client.get<CustomerNote[]>(`${API_ROUTES.customers}/${customerId}/notes`);
+}
+
+export async function createCustomerNote(
+  client: ApiClient,
+  customerId: string,
+  body: string,
+): Promise<CustomerNote> {
+  return client.post<CustomerNote>(`${API_ROUTES.customers}/${customerId}/notes`, { body });
 }

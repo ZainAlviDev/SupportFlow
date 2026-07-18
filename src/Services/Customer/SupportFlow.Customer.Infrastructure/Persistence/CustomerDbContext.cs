@@ -26,6 +26,7 @@ public class CustomerDbContext : DbContext
     }
 
     public DbSet<CustomerEntity> Customers => Set<CustomerEntity>();
+    public DbSet<CustomerNote> CustomerNotes => Set<CustomerNote>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -45,6 +46,18 @@ public class CustomerDbContext : DbContext
 
             entity.HasIndex(x => new { x.TenantId, x.Email });
             entity.HasIndex(x => new { x.TenantId, x.ExternalId });
+        });
+
+        modelBuilder.Entity<CustomerNote>(entity =>
+        {
+            entity.ToTable("CustomerNotes");
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Body).HasMaxLength(8000);
+            entity.HasIndex(x => new { x.CustomerId, x.CreatedAt });
+            entity.HasOne(x => x.Customer)
+                .WithMany()
+                .HasForeignKey(x => x.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.ApplyTenantAndSoftDeleteFilters(_tenantContext);

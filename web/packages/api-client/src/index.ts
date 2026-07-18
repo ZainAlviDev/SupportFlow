@@ -43,8 +43,30 @@ export type {
   CreateConversationPayload,
   SendMessagePayload,
 } from "./conversations";
-export { listCustomers, createCustomer } from "./customers";
-export type { Customer, CreateCustomerPayload, ListCustomersParams } from "./customers";
+export {
+  listCustomers,
+  createCustomer,
+  getCustomer,
+  updateCustomer,
+  listCustomerNotes,
+  createCustomerNote,
+} from "./customers";
+export type {
+  Customer,
+  CustomerNote,
+  CreateCustomerPayload,
+  ListCustomersParams,
+  UpdateCustomerPayload,
+} from "./customers";
+export { listTickets, getTicket, createTicket, updateTicket, listTicketComments, createTicketComment } from "./tickets";
+export type {
+  Ticket,
+  TicketComment,
+  ListTicketsParams,
+  CreateTicketPayload,
+  UpdateTicketPayload,
+  CreateTicketCommentPayload,
+} from "./tickets";
 export { ApiClient, createApiClient } from "./client";
 export type { ApiClientOptions } from "./client";
 export type * from "./types";

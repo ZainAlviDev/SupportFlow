@@ -1,11 +1,9 @@
-import { PlaceholderPage } from "@/components/layout/PlaceholderPage";
+"use client";
+
+import { useParams } from "next/navigation";
+import { CustomerDetail } from "@/components/customers/CustomerDetail";
 
 export default function CustomerDetailPage() {
-  return (
-    <PlaceholderPage
-      title="Customer Detail"
-      description="Customer profile and timeline"
-      module="Module 5"
-    />
-  );
+  const params = useParams<{ id: string }>();
+  return <CustomerDetail customerId={params.id} />;
 }

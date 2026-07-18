@@ -31,6 +31,7 @@ public sealed class ConversationService : IConversationService
         string? status,
         string? assignee,
         Guid? currentUserId,
+        Guid? customerId,
         int page,
         int pageSize,
         CancellationToken cancellationToken)
@@ -69,6 +70,11 @@ public sealed class ConversationService : IConversationService
             {
                 throw new ConflictException("assignee must be 'me', 'unassigned', or a user id.");
             }
+        }
+
+        if (customerId.HasValue)
+        {
+            query = query.Where(c => c.CustomerId == customerId.Value);
         }
 
         var total = await query.CountAsync(cancellationToken);
