@@ -1,11 +1,15 @@
-import { PlaceholderPage } from "@/components/layout/PlaceholderPage";
+"use client";
+
+import { useParams } from "next/navigation";
+import { ArticleEditor } from "@/components/knowledge/ArticleEditor";
 
 export default function KnowledgeDetailPage() {
-  return (
-    <PlaceholderPage
-      title="Article"
-      description="Edit knowledge base article"
-      module="Module 6"
-    />
-  );
+  const params = useParams<{ id: string }>();
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
+
+  if (!id) {
+    return null;
+  }
+
+  return <ArticleEditor articleId={id} />;
 }

@@ -31,6 +31,11 @@
         "Path": "src\\Services\\Ticket\\SupportFlow.Ticket.Api\\SupportFlow.Ticket.Api.csproj",
         "Action": "StartWithoutDebugging",
         "DebugTarget": "IIS Express"
+      },
+      {
+        "Path": "src\\Services\\Knowledge\\SupportFlow.Knowledge.Api\\SupportFlow.Knowledge.Api.csproj",
+        "Action": "StartWithoutDebugging",
+        "DebugTarget": "IIS Express"
       }
     ]
   }

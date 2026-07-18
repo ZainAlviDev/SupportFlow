@@ -3,9 +3,22 @@
   <ItemGroup>
     <ProjectReference Include="..\SupportFlow.Knowledge.Application\SupportFlow.Knowledge.Application.csproj" />
     <ProjectReference Include="..\SupportFlow.Knowledge.Domain\SupportFlow.Knowledge.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Shared\SupportFlow.Shared.Infrastructure\SupportFlow.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Shared\SupportFlow.Shared.Kernel\SupportFlow.Shared.Kernel.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="EFCore.SqlServer.VectorSearch" />
+    <PackageReference Include="Hangfire.AspNetCore" />
+    <PackageReference Include="Hangfire.SqlServer" />
+    <PackageReference Include="HtmlSanitizer" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
   </ItemGroup>
 

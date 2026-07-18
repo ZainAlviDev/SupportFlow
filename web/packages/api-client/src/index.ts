@@ -67,6 +67,22 @@ export type {
   UpdateTicketPayload,
   CreateTicketCommentPayload,
 } from "./tickets";
+export {
+  listKnowledgeArticles,
+  getKnowledgeArticle,
+  createKnowledgeArticle,
+  updateKnowledgeArticle,
+  deleteKnowledgeArticle,
+} from "./knowledge";
+export type {
+  KnowledgeArticle,
+  KnowledgeArticleStatus,
+  ListKnowledgeArticlesParams,
+  CreateKnowledgeArticlePayload,
+  UpdateKnowledgeArticlePayload,
+} from "./knowledge";
+export { suggestReply } from "./ai";
+export type { SuggestReplyPayload, SuggestReplyResult, SuggestReplySource } from "./ai";
 export { ApiClient, createApiClient } from "./client";
 export type { ApiClientOptions } from "./client";
 export type * from "./types";

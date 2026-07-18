@@ -12,11 +12,22 @@ import { Button } from "@supportflow/ui";
 
 const MAX_LENGTH = 8000;
 
+/** Text injected into the composer from outside (e.g. an accepted AI suggestion). */
+export type ComposerDraft = {
+  /** Unique per injection so the same text can be re-applied. */
+  id: number;
+  text: string;
+  isAiGenerated: boolean;
+};
+
 type MessageComposerProps = {
   disabled?: boolean;
   sending?: boolean;
   placeholder?: string;
-  onSend: (body: string) => Promise<void> | void;
+  draft?: ComposerDraft | null;
+  suggesting?: boolean;
+  onSuggest?: () => void;
+  onSend: (body: string, options: { isAiGenerated: boolean }) => Promise<void> | void;
   onTypingStart?: () => void;
   onTypingStop?: () => void;
 };
@@ -25,12 +36,16 @@ export function MessageComposer({
   disabled = false,
   sending = false,
   placeholder,
+  draft = null,
+  suggesting = false,
+  onSuggest,
   onSend,
   onTypingStart,
   onTypingStop,
 }: MessageComposerProps) {
   const fieldId = useId();
   const [body, setBody] = useState("");
+  const [isAiDraft, setIsAiDraft] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const typingActiveRef = useRef(false);
@@ -55,6 +70,18 @@ export function MessageComposer({
       if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
     };
   }, []);
+
+  // Apply externally injected drafts (accepted AI suggestions).
+  useEffect(() => {
+    if (!draft) return;
+    setBody(draft.text.slice(0, MAX_LENGTH));
+    setIsAiDraft(draft.isAiGenerated);
+    setError(null);
+    requestAnimationFrame(() => {
+      textareaRef.current?.focus();
+      resize();
+    });
+  }, [draft]);
 
   const clearTyping = () => {
     if (typingTimerRef.current) {
@@ -103,8 +130,9 @@ export function MessageComposer({
     setError(null);
     clearTyping();
     try {
-      await onSend(text);
+      await onSend(text, { isAiGenerated: isAiDraft });
       setBody("");
+      setIsAiDraft(false);
       requestAnimationFrame(() => {
         textareaRef.current?.focus();
         resize();
@@ -156,6 +184,7 @@ export function MessageComposer({
               bumpTyping();
             } else {
               clearTyping();
+              setIsAiDraft(false);
             }
           }}
           onBlur={() => clearTyping()}
@@ -169,6 +198,23 @@ export function MessageComposer({
           }
           className="min-h-[2.75rem] max-h-36 w-full resize-none overflow-y-auto rounded-lg border border-line bg-white px-3 py-2.5 text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 disabled:cursor-not-allowed disabled:opacity-60 dark:border-charcoal-muted dark:bg-charcoal-soft dark:text-white"
         />
+        {onSuggest && (
+          <Button
+            type="button"
+            variant="outline"
+            disabled={disabled || sending || suggesting}
+            onClick={onSuggest}
+            className="shrink-0"
+            aria-label="Suggest a reply with AI"
+            title="Suggest a reply with AI"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z" />
+              <path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z" />
+            </svg>
+            <span className="hidden sm:inline">{suggesting ? "Suggesting…" : "Suggest"}</span>
+          </Button>
+        )}
         <Button
           type="submit"
           disabled={disabled || sending || !body.trim()}
@@ -180,7 +226,14 @@ export function MessageComposer({
       </div>
 
       <div className="mt-1.5 flex items-center justify-between gap-3 text-[11px] text-ink-faint">
-        <span>Enter to send · Shift+Enter for a new line</span>
+        <span className="flex items-center gap-2">
+          <span>Enter to send · Shift+Enter for a new line</span>
+          {isAiDraft && (
+            <span className="rounded bg-brand-100 px-1.5 py-0.5 font-semibold text-brand-700 dark:bg-brand-500/25 dark:text-brand-200">
+              AI draft
+            </span>
+          )}
+        </span>
         {nearLimit && (
           <span className={remaining < 0 ? "text-red-600" : undefined}>
             {remaining} left

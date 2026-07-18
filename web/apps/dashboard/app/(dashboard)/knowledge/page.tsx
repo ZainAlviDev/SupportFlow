@@ -1,11 +1,7 @@
-import { PlaceholderPage } from "@/components/layout/PlaceholderPage";
+"use client";
+
+import { KnowledgeList } from "@/components/knowledge/KnowledgeList";
 
 export default function KnowledgePage() {
-  return (
-    <PlaceholderPage
-      title="Knowledge Base"
-      description="Articles and help content"
-      module="Module 6"
-    />
-  );
+  return <KnowledgeList />;
 }
