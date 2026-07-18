@@ -1,6 +1,18 @@
 @SupportFlow.AI.Api_HostAddress = http://localhost:5237
+@AccessToken = paste-jwt-access-token-here
 
-GET {{SupportFlow.AI.Api_HostAddress}}/weatherforecast/
+GET {{SupportFlow.AI.Api_HostAddress}}/health/live
 Accept: application/json
+
+###
+
+POST {{SupportFlow.AI.Api_HostAddress}}/api/v1/ai/suggest-reply
+Content-Type: application/json
+Authorization: Bearer {{AccessToken}}
+
+{
+  "conversationId": "00000000-0000-0000-0000-000000000000",
+  "prompt": "Keep the tone friendly and offer a refund if applicable."
+}
 
 ###

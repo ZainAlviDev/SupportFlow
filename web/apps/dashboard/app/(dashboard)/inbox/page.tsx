@@ -193,8 +193,8 @@ export default function InboxPage() {
             error={messagesError}
             typingNames={typingNames}
             onBack={() => setSelectedConversationId(null)}
-            onSend={async (body) => {
-              const sent = await sendMessage(body);
+            onSend={async (body, options) => {
+              const sent = await sendMessage(body, options);
               touchConversation(sent.conversationId, sent.createdAt);
             }}
             onTypingStart={handleTypingStart}

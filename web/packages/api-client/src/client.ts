@@ -160,6 +160,13 @@ export class ApiClient {
     });
   }
 
+  put<T>(path: string, data?: unknown) {
+    return this.request<T>(path, {
+      method: "PUT",
+      body: data ? JSON.stringify(data) : undefined,
+    });
+  }
+
   patch<T>(path: string, data?: unknown) {
     return this.request<T>(path, {
       method: "PATCH",

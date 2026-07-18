@@ -46,7 +46,7 @@ export function useMessages(conversationId: string | null) {
   }, []);
 
   const sendMessage = useCallback(
-    async (body: string) => {
+    async (body: string, options?: { isAiGenerated?: boolean }) => {
       if (!conversationId || !body.trim()) {
         throw new Error("Select a conversation and enter a message.");
       }
@@ -54,7 +54,10 @@ export function useMessages(conversationId: string | null) {
       setIsSending(true);
       setError(null);
       try {
-        const sent = await sendMessageRequest(api, conversationId, { body: body.trim() });
+        const sent = await sendMessageRequest(api, conversationId, {
+          body: body.trim(),
+          isAiGenerated: options?.isAiGenerated || undefined,
+        });
         appendMessage(sent);
         return sent;
       } catch (err) {

@@ -1,8 +1,14 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Hangfire;
+using Microsoft.OpenApi.Models;
+using SupportFlow.Knowledge.Api.Middleware;
 using SupportFlow.Knowledge.Application;
 using SupportFlow.Knowledge.Infrastructure;
+using SupportFlow.Shared.Infrastructure.Tenancy;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? ["http://localhost:3000", "http://127.0.0.1:3000"];
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -32,6 +38,14 @@ builder.Services.AddSwaggerGen(options =>
         },
     });
 });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Dashboard", policy =>
+        policy.WithOrigins(corsOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials());
+});
 
 var app = builder.Build();
 
@@ -39,7 +53,14 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseHangfireDashboard("/hangfire");
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseCors("Dashboard");
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseMiddleware<TenantResolutionMiddleware>();
 
 app.MapHealthChecks("/health/live");
 app.MapControllers();

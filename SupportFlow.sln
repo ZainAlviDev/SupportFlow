@@ -99,6 +99,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SupportFlow.Notification.Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SupportFlow.Shared.Infrastructure", "src\Shared\SupportFlow.Shared.Infrastructure\SupportFlow.Shared.Infrastructure.csproj", "{3F05FEFD-4542-4202-9420-BF6A3CC027A6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SupportFlow.Knowledge.Infrastructure.Tests", "src\Services\Knowledge\SupportFlow.Knowledge.Infrastructure.Tests\SupportFlow.Knowledge.Infrastructure.Tests.csproj", "{E6A8FC69-2888-488D-808C-C377AF435F4E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -541,6 +543,18 @@ Global
 		{3F05FEFD-4542-4202-9420-BF6A3CC027A6}.Release|x64.Build.0 = Release|Any CPU
 		{3F05FEFD-4542-4202-9420-BF6A3CC027A6}.Release|x86.ActiveCfg = Release|Any CPU
 		{3F05FEFD-4542-4202-9420-BF6A3CC027A6}.Release|x86.Build.0 = Release|Any CPU
+		{E6A8FC69-2888-488D-808C-C377AF435F4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6A8FC69-2888-488D-808C-C377AF435F4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6A8FC69-2888-488D-808C-C377AF435F4E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E6A8FC69-2888-488D-808C-C377AF435F4E}.Debug|x64.Build.0 = Debug|Any CPU
+		{E6A8FC69-2888-488D-808C-C377AF435F4E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E6A8FC69-2888-488D-808C-C377AF435F4E}.Debug|x86.Build.0 = Debug|Any CPU
+		{E6A8FC69-2888-488D-808C-C377AF435F4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6A8FC69-2888-488D-808C-C377AF435F4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6A8FC69-2888-488D-808C-C377AF435F4E}.Release|x64.ActiveCfg = Release|Any CPU
+		{E6A8FC69-2888-488D-808C-C377AF435F4E}.Release|x64.Build.0 = Release|Any CPU
+		{E6A8FC69-2888-488D-808C-C377AF435F4E}.Release|x86.ActiveCfg = Release|Any CPU
+		{E6A8FC69-2888-488D-808C-C377AF435F4E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -593,5 +607,6 @@ Global
 		{12FF3313-D58A-4BCB-95A0-F65104E2D0E5} = {C5FBE174-8E0F-F5A3-B929-8BD0C55C0A32}
 		{8DA130B7-B10D-42EC-B6C4-FDFADFDEA877} = {C5FBE174-8E0F-F5A3-B929-8BD0C55C0A32}
 		{3F05FEFD-4542-4202-9420-BF6A3CC027A6} = {C8E42992-5E42-0C2B-DBFE-AA848D06431C}
+		{E6A8FC69-2888-488D-808C-C377AF435F4E} = {C92477B5-E4C8-67A8-E3A7-9AC851A69EDA}
 	EndGlobalSection
 EndGlobal

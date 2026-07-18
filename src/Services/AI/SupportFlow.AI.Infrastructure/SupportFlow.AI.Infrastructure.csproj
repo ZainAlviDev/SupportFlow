@@ -3,9 +3,17 @@
   <ItemGroup>
     <ProjectReference Include="..\SupportFlow.AI.Application\SupportFlow.AI.Application.csproj" />
     <ProjectReference Include="..\SupportFlow.AI.Domain\SupportFlow.AI.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Shared\SupportFlow.Shared.Infrastructure\SupportFlow.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Shared\SupportFlow.Shared.Kernel\SupportFlow.Shared.Kernel.csproj" />
+    <ProjectReference Include="..\..\..\Shared\SupportFlow.Shared.Contracts\SupportFlow.Shared.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
   </ItemGroup>
 

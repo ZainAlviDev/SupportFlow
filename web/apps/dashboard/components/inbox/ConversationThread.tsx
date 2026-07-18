@@ -1,11 +1,18 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import type { Conversation, Message } from "@supportflow/api-client";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  suggestReply,
+  type Conversation,
+  type Message,
+  type SuggestReplyResult,
+} from "@supportflow/api-client";
+import { api } from "@/lib/api";
+import { AiSuggestionPanel } from "@/components/inbox/AiSuggestionPanel";
 import { ConversationActions } from "@/components/inbox/ConversationActions";
 import { AiLoader } from "@/components/ui/AiLoader";
 import { MessageBubble } from "@/components/inbox/MessageBubble";
-import { MessageComposer } from "@/components/inbox/MessageComposer";
+import { MessageComposer, type ComposerDraft } from "@/components/inbox/MessageComposer";
 import { TypingIndicator } from "@/components/inbox/TypingIndicator";
 
 type ConversationThreadProps = {
@@ -16,7 +23,7 @@ type ConversationThreadProps = {
   error: string | null;
   typingNames: string[];
   onBack?: () => void;
-  onSend: (body: string) => Promise<void>;
+  onSend: (body: string, options: { isAiGenerated: boolean }) => Promise<void>;
   onTypingStart: () => void;
   onTypingStop: () => void;
   onConversationUpdated: (conversation: Conversation) => void;
@@ -49,9 +56,58 @@ export function ConversationThread({
 }: ConversationThreadProps) {
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
+  const [suggestion, setSuggestion] = useState<SuggestReplyResult | null>(null);
+  const [isSuggesting, setIsSuggesting] = useState(false);
+  const [suggestError, setSuggestError] = useState<string | null>(null);
+  const [composerDraft, setComposerDraft] = useState<ComposerDraft | null>(null);
+  const suggestRequestRef = useRef(0);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length, typingNames.length, conversation?.id]);
+
+  // Suggestions belong to one thread; drop them when switching.
+  useEffect(() => {
+    setSuggestion(null);
+    setIsSuggesting(false);
+    setSuggestError(null);
+    setComposerDraft(null);
+    suggestRequestRef.current += 1;
+  }, [conversation?.id]);
+
+  const handleSuggest = useCallback(async () => {
+    if (!conversation || isSuggesting) return;
+
+    const requestId = ++suggestRequestRef.current;
+    setIsSuggesting(true);
+    setSuggestError(null);
+    setSuggestion(null);
+    try {
+      const result = await suggestReply(api, { conversationId: conversation.id });
+      if (suggestRequestRef.current !== requestId) return;
+      setSuggestion(result);
+    } catch (err) {
+      if (suggestRequestRef.current !== requestId) return;
+      setSuggestError(err instanceof Error ? err.message : "Unable to suggest a reply.");
+    } finally {
+      if (suggestRequestRef.current === requestId) {
+        setIsSuggesting(false);
+      }
+    }
+  }, [conversation, isSuggesting]);
+
+  const dismissSuggestion = useCallback(() => {
+    suggestRequestRef.current += 1;
+    setSuggestion(null);
+    setSuggestError(null);
+    setIsSuggesting(false);
+  }, []);
+
+  const acceptSuggestion = useCallback((text: string) => {
+    setComposerDraft({ id: Date.now(), text, isAiGenerated: true });
+    setSuggestion(null);
+    setSuggestError(null);
+  }, []);
 
   if (!conversation) {
     return (
@@ -135,8 +191,19 @@ export function ConversationThread({
         <div ref={bottomRef} />
       </div>
 
+      <AiSuggestionPanel
+        loading={isSuggesting}
+        error={suggestError}
+        result={suggestion}
+        onAccept={acceptSuggestion}
+        onDismiss={dismissSuggestion}
+      />
+
       <MessageComposer
         sending={isSending}
+        draft={composerDraft}
+        suggesting={isSuggesting}
+        onSuggest={() => void handleSuggest()}
         onSend={onSend}
         onTypingStart={onTypingStart}
         onTypingStop={onTypingStop}
