@@ -5,8 +5,10 @@ using SupportFlow.Conversation.Application.Common.Events;
 using SupportFlow.Conversation.Application.Common.Exceptions;
 using SupportFlow.Conversation.Application.Common.Interfaces;
 using SupportFlow.Conversation.Domain.Enums;
+using SupportFlow.Conversation.Infrastructure.Notifications;
 using SupportFlow.Conversation.Infrastructure.Persistence;
 using SupportFlow.Shared.Contracts.Conversations;
+using SupportFlow.Shared.Contracts.Notifications;
 using SupportFlow.Shared.Kernel.Enums;
 using ConversationEntity = SupportFlow.Conversation.Domain.Entities.Conversation;
 using MessageEntity = SupportFlow.Conversation.Domain.Entities.Message;
@@ -19,11 +21,16 @@ public sealed class ConversationService : IConversationService
 
     private readonly ConversationDbContext _dbContext;
     private readonly IPublisher _publisher;
+    private readonly INotificationClient _notificationClient;
 
-    public ConversationService(ConversationDbContext dbContext, IPublisher publisher)
+    public ConversationService(
+        ConversationDbContext dbContext,
+        IPublisher publisher,
+        INotificationClient notificationClient)
     {
         _dbContext = dbContext;
         _publisher = publisher;
+        _notificationClient = notificationClient;
     }
 
     public async Task<ConversationListResult> ListAsync(
@@ -189,6 +196,7 @@ public sealed class ConversationService : IConversationService
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         await _publisher.Publish(new MessageSentNotification(MapMessage(systemMessage)), cancellationToken);
+        await NotifyConversationAssignedAsync(conversation, cancellationToken);
         return await PublishUpdatedAsync(conversation, cancellationToken);
     }
 
@@ -299,7 +307,46 @@ public sealed class ConversationService : IConversationService
         var dto = MapMessage(message);
         await _publisher.Publish(new MessageSentNotification(dto), cancellationToken);
         await _publisher.Publish(new ConversationUpdatedNotification(MapConversation(conversation)), cancellationToken);
+
+        if (parsedSender == SenderType.Customer && conversation.AssigneeId is Guid assigneeId)
+        {
+            var preview = body.Length <= 120 ? body : body[..120] + "…";
+            await _notificationClient.NotifyAsync(
+                tenantId,
+                new CreateNotificationRequest(
+                    UserId: assigneeId,
+                    Type: "NewMessage",
+                    Title: "New customer message",
+                    Body: preview,
+                    ResourceType: "conversation",
+                    ResourceId: conversationId,
+                    IdempotencyKey: $"message:{message.Id}"),
+                cancellationToken);
+        }
+
         return dto;
+    }
+
+    private async Task NotifyConversationAssignedAsync(
+        ConversationEntity conversation,
+        CancellationToken cancellationToken)
+    {
+        if (conversation.AssigneeId is not Guid assigneeId)
+        {
+            return;
+        }
+
+        await _notificationClient.NotifyAsync(
+            conversation.TenantId,
+            new CreateNotificationRequest(
+                UserId: assigneeId,
+                Type: "ConversationAssigned",
+                Title: "Conversation assigned",
+                Body: "A conversation was assigned to you.",
+                ResourceType: "conversation",
+                ResourceId: conversation.Id,
+                IdempotencyKey: $"conversation-assigned:{conversation.Id}:{assigneeId}:{conversation.UpdatedAt?.Ticks ?? conversation.CreatedAt.Ticks}"),
+            cancellationToken);
     }
 
     public async Task<ConversationDto?> FindOpenByCustomerAsync(

@@ -1,41 +1,51 @@
 [
   {
-    "Name": "Auth Stack (Gateway + Identity + Workspace)",
+    "Name": "Full Backend Stack",
     "Projects": [
       {
         "Path": "src\\Gateway\\SupportFlow.Gateway\\SupportFlow.Gateway.csproj",
         "Action": "StartWithoutDebugging",
-        "DebugTarget": "IIS Express"
+        "DebugTarget": "http"
       },
       {
         "Path": "src\\Services\\Identity\\SupportFlow.Identity.Api\\SupportFlow.Identity.Api.csproj",
         "Action": "StartWithoutDebugging",
-        "DebugTarget": "IIS Express"
+        "DebugTarget": "http"
       },
       {
         "Path": "src\\Services\\Workspace\\SupportFlow.Workspace.Api\\SupportFlow.Workspace.Api.csproj",
         "Action": "StartWithoutDebugging",
-        "DebugTarget": "IIS Express"
+        "DebugTarget": "http"
       },
       {
         "Path": "src\\Services\\Conversation\\SupportFlow.Conversation.Api\\SupportFlow.Conversation.Api.csproj",
         "Action": "StartWithoutDebugging",
-        "DebugTarget": "IIS Express"
-      },
-      {
-        "Path": "src\\Services\\Customer\\SupportFlow.Customer.Api\\SupportFlow.Customer.Api.csproj",
-        "Action": "StartWithoutDebugging",
-        "DebugTarget": "IIS Express"
+        "DebugTarget": "http"
       },
       {
         "Path": "src\\Services\\Ticket\\SupportFlow.Ticket.Api\\SupportFlow.Ticket.Api.csproj",
         "Action": "StartWithoutDebugging",
-        "DebugTarget": "IIS Express"
+        "DebugTarget": "http"
+      },
+      {
+        "Path": "src\\Services\\Customer\\SupportFlow.Customer.Api\\SupportFlow.Customer.Api.csproj",
+        "Action": "StartWithoutDebugging",
+        "DebugTarget": "http"
       },
       {
         "Path": "src\\Services\\Knowledge\\SupportFlow.Knowledge.Api\\SupportFlow.Knowledge.Api.csproj",
         "Action": "StartWithoutDebugging",
-        "DebugTarget": "IIS Express"
+        "DebugTarget": "http"
+      },
+      {
+        "Path": "src\\Services\\AI\\SupportFlow.AI.Api\\SupportFlow.AI.Api.csproj",
+        "Action": "StartWithoutDebugging",
+        "DebugTarget": "http"
+      },
+      {
+        "Path": "src\\Services\\Notification\\SupportFlow.Notification.Api\\SupportFlow.Notification.Api.csproj",
+        "Action": "StartWithoutDebugging",
+        "DebugTarget": "http"
       }
     ]
   }

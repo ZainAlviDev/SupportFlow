@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using SupportFlow.Shared.Infrastructure;
 using SupportFlow.Ticket.Application.Common.Interfaces;
 using SupportFlow.Ticket.Infrastructure.Auth;
+using SupportFlow.Ticket.Infrastructure.Notifications;
 using SupportFlow.Ticket.Infrastructure.Persistence;
 using SupportFlow.Ticket.Infrastructure.Seeding;
 using SupportFlow.Ticket.Infrastructure.Tickets;
@@ -54,6 +55,13 @@ public static class DependencyInjection
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<ITicketService, TicketService>();
         services.AddHostedService<TicketDbMigrator>();
+
+        var notificationBaseUrl = configuration["Services:Notification"] ?? "http://localhost:5080";
+        services.AddHttpClient<INotificationClient, NotificationClient>(client =>
+        {
+            client.BaseAddress = new Uri(notificationBaseUrl.TrimEnd('/') + "/");
+            client.Timeout = TimeSpan.FromSeconds(10);
+        });
 
         return services;
     }

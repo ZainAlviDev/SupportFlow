@@ -10,6 +10,7 @@ import {
 } from "@supportflow/api-client";
 import { Button, Input, Label } from "@supportflow/ui";
 import { AiLoader } from "@/components/ui/AiLoader";
+import { WidgetBrandingForm } from "@/components/settings/WidgetBrandingForm";
 import { api } from "@/lib/api";
 
 const WIDGET_SCRIPT_URL =
@@ -31,6 +32,7 @@ async function copyText(value: string) {
 }
 
 export default function WidgetSettingsPage() {
+  const [activeTab, setActiveTab] = useState<"keys" | "branding">("keys");
   const [keys, setKeys] = useState<ApiKey[]>([]);
   const [name, setName] = useState("Website widget");
   const [loading, setLoading] = useState(true);
@@ -130,11 +132,47 @@ export default function WidgetSettingsPage() {
 
   return (
     <div className="space-y-4">
-      {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-          {error}
-        </div>
-      )}
+      {/* Section switcher */}
+      <div
+        role="tablist"
+        aria-label="Widget settings sections"
+        className="flex w-fit gap-1 rounded-xl bg-surface-soft p-1 dark:bg-charcoal-soft"
+      >
+        {(
+          [
+            { id: "keys", label: "API keys & embed" },
+            { id: "branding", label: "Widget branding" },
+          ] as const
+        ).map((tab) => {
+          const active = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              onClick={() => setActiveTab(tab.id)}
+              className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
+                active
+                  ? "bg-white text-brand-700 shadow-sm ring-1 ring-line dark:bg-charcoal dark:text-brand-300 dark:ring-charcoal-muted"
+                  : "text-ink-soft hover:text-ink dark:text-ink-faint dark:hover:text-white"
+              }`}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {activeTab === "branding" && <WidgetBrandingForm />}
+
+      {activeTab === "keys" && (
+        <div className="space-y-4">
+          {error && (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {error}
+            </div>
+          )}
 
       {/* Setup steps */}
       <div className="grid gap-3 sm:grid-cols-3">
@@ -365,6 +403,8 @@ export default function WidgetSettingsPage() {
           </div>
         </section>
       </div>
+        </div>
+      )}
     </div>
   );
 }

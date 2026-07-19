@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { listTickets, type Ticket } from "@supportflow/api-client";
 import { Button } from "@supportflow/ui";
+import { AiLoader } from "@/components/ui/AiLoader";
 import { api } from "@/lib/api";
 
 const STATUSES = ["", "New", "Open", "Pending", "Resolved", "Closed"] as const;
@@ -146,18 +147,30 @@ export function TicketsList() {
       </div>
 
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-          {error}
+        <div className="space-y-2 rounded-lg border border-red-200 bg-red-50 px-3 py-3 text-sm text-red-700">
+          <p>{error}</p>
+          <button
+            type="button"
+            className="text-xs font-medium text-brand-700"
+            onClick={() => void load()}
+          >
+            Retry
+          </button>
         </div>
       )}
 
       <div className="overflow-hidden rounded-xl border border-line bg-white dark:border-charcoal-muted dark:bg-charcoal">
         {isLoading ? (
-          <p className="px-4 py-8 text-sm text-ink-muted">Loading tickets…</p>
+          <div className="flex justify-center px-4 py-10">
+            <AiLoader size="sm" label="Loading tickets" />
+          </div>
         ) : tickets.length === 0 ? (
-          <p className="px-4 py-8 text-sm text-ink-muted">
-            No tickets yet. Create one from a conversation in the inbox.
-          </p>
+          <div className="px-4 py-10 text-center">
+            <p className="text-sm font-medium text-charcoal dark:text-white">No tickets yet</p>
+            <p className="mt-1 text-sm text-ink-muted">
+              Create one from a conversation in the inbox.
+            </p>
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">

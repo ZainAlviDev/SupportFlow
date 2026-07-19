@@ -10,8 +10,10 @@ public sealed class UpdateCurrentWorkspaceCommandValidator : AbstractValidator<U
             .Must(x =>
                 !string.IsNullOrWhiteSpace(x.Name)
                 || !string.IsNullOrWhiteSpace(x.Timezone)
-                || x.SettingsJson is not null)
-            .WithMessage("Provide at least one of name, timezone, or settingsJson.");
+                || x.SettingsJson is not null
+                || x.Widget is not null
+                || x.BusinessHours is not null)
+            .WithMessage("Provide at least one of name, timezone, settingsJson, widget, or businessHours.");
 
         RuleFor(x => x.Name)
             .MinimumLength(2)

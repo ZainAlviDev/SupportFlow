@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useAuth } from "@/hooks/useAuth";
 import { Dialog } from "@supportflow/ui";
 
@@ -105,6 +106,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
         {/* Right: actions */}
         <div className="relative flex shrink-0 items-center gap-1.5 sm:gap-2">
           <ThemeToggle />
+          <NotificationBell />
 
           <span className="mx-1 hidden h-6 w-px bg-line sm:block dark:bg-charcoal-muted" aria-hidden />
 

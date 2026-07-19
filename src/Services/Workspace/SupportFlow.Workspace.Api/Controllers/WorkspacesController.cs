@@ -44,7 +44,12 @@ public sealed class WorkspacesController : ControllerBase
         CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(
-            new UpdateCurrentWorkspaceCommand(request.Name, request.Timezone, request.SettingsJson),
+            new UpdateCurrentWorkspaceCommand(
+                request.Name,
+                request.Timezone,
+                request.SettingsJson,
+                request.Widget,
+                request.BusinessHours),
             cancellationToken);
 
         return Ok(ApiResponse<WorkspaceDto>.Success(result));

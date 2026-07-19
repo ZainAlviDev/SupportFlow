@@ -1,9 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using SupportFlow.Shared.Contracts.Notifications;
 using SupportFlow.Shared.Contracts.Tickets;
 using SupportFlow.Shared.Kernel.Enums;
 using SupportFlow.Ticket.Application.Common.Exceptions;
 using SupportFlow.Ticket.Application.Common.Interfaces;
 using SupportFlow.Ticket.Domain.Enums;
+using SupportFlow.Ticket.Infrastructure.Notifications;
 using SupportFlow.Ticket.Infrastructure.Persistence;
 using TicketEntity = SupportFlow.Ticket.Domain.Entities.Ticket;
 
@@ -12,10 +14,12 @@ namespace SupportFlow.Ticket.Infrastructure.Tickets;
 public sealed class TicketService : ITicketService
 {
     private readonly TicketDbContext _dbContext;
+    private readonly INotificationClient _notificationClient;
 
-    public TicketService(TicketDbContext dbContext)
+    public TicketService(TicketDbContext dbContext, INotificationClient notificationClient)
     {
         _dbContext = dbContext;
+        _notificationClient = notificationClient;
     }
 
     public async Task<TicketListResult> ListAsync(
@@ -126,6 +130,12 @@ public sealed class TicketService : ITicketService
 
         _dbContext.Tickets.Add(ticket);
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        if (assigneeId is Guid assignedTo)
+        {
+            await NotifyTicketAssignedAsync(ticket, assignedTo, cancellationToken);
+        }
+
         return Map(ticket);
     }
 
@@ -165,10 +175,36 @@ public sealed class TicketService : ITicketService
             parsedStatus = value;
         }
 
+        var previousAssignee = ticket.AssigneeId;
         ticket.ApplyUpdate(subject, description, parsedPriority, parsedStatus, assigneeId, clearAssignee);
         ticket.UpdatedBy = updatedBy;
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        if (ticket.AssigneeId is Guid newAssignee
+            && newAssignee != previousAssignee)
+        {
+            await NotifyTicketAssignedAsync(ticket, newAssignee, cancellationToken);
+        }
+
         return Map(ticket);
+    }
+
+    private async Task NotifyTicketAssignedAsync(
+        TicketEntity ticket,
+        Guid assigneeId,
+        CancellationToken cancellationToken)
+    {
+        await _notificationClient.NotifyAsync(
+            ticket.TenantId,
+            new CreateNotificationRequest(
+                UserId: assigneeId,
+                Type: "TicketAssigned",
+                Title: "Ticket assigned",
+                Body: $"Ticket {ticket.TicketNumber} was assigned to you.",
+                ResourceType: "ticket",
+                ResourceId: ticket.Id,
+                IdempotencyKey: $"ticket-assigned:{ticket.Id}:{assigneeId}:{ticket.UpdatedAt?.Ticks ?? ticket.CreatedAt.Ticks}"),
+            cancellationToken);
     }
 
     public async Task<IReadOnlyList<TicketCommentDto>> ListCommentsAsync(

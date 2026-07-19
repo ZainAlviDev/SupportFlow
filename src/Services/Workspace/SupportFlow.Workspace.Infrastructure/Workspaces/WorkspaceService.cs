@@ -61,17 +61,32 @@ public sealed class WorkspaceService : IWorkspaceService
         string? name,
         string? timezone,
         string? settingsJson,
+        WidgetSettingsDto? widget,
+        BusinessHoursSettingsDto? businessHours,
         CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(name)
             && string.IsNullOrWhiteSpace(timezone)
-            && settingsJson is null)
+            && settingsJson is null
+            && widget is null
+            && businessHours is null)
         {
-            throw new ConflictException("Provide a workspace name and/or timezone to update.");
+            throw new ConflictException("Provide a workspace name, timezone, or settings to update.");
         }
 
         var workspace = await EnsureProfileAsync(tenantId, name, timezone, cancellationToken);
-        workspace.Update(name, timezone, settingsJson);
+
+        string? mergedSettings = null;
+        if (settingsJson is not null || widget is not null || businessHours is not null)
+        {
+            mergedSettings = WorkspaceSettingsMerger.Merge(
+                workspace.SettingsJson,
+                settingsJson,
+                widget,
+                businessHours);
+        }
+
+        workspace.Update(name, timezone, mergedSettings);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return Map(workspace);
@@ -122,13 +137,18 @@ public sealed class WorkspaceService : IWorkspaceService
         return slug;
     }
 
-    private static WorkspaceDto Map(WorkspaceProfile workspace) =>
-        new(
+    private static WorkspaceDto Map(WorkspaceProfile workspace)
+    {
+        var (widget, businessHours) = WorkspaceSettingsMerger.Parse(workspace.SettingsJson);
+        return new(
             workspace.Id,
             workspace.Name,
             workspace.Slug,
             workspace.Timezone,
             workspace.Plan,
             workspace.SettingsJson,
-            workspace.CreatedAt);
+            workspace.CreatedAt,
+            widget,
+            businessHours);
+    }
 }

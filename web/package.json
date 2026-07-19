@@ -9,6 +9,7 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "lint": "turbo lint",
+    "test": "npm run test --workspace=@supportflow/dashboard",
     "dev:dashboard": "turbo dev --filter=@supportflow/dashboard",
     "dev:widget": "turbo dev --filter=@supportflow/widget"
   },

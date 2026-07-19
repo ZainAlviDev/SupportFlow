@@ -7,10 +7,33 @@ export type CreateWorkspaceRequest = {
   timezone?: string;
 };
 
+export type WidgetSettings = {
+  primaryColor?: string | null;
+  position?: string | null;
+  welcomeMessage?: string | null;
+  preChatEnabled?: boolean | null;
+};
+
+export type BusinessHoursDay = {
+  day: string;
+  isOpen: boolean;
+  open?: string | null;
+  close?: string | null;
+};
+
+export type BusinessHoursSettings = {
+  enabled?: boolean | null;
+  timezone?: string | null;
+  days?: BusinessHoursDay[] | null;
+  offlineMessage?: string | null;
+};
+
 export type UpdateWorkspaceRequest = {
   name?: string;
   timezone?: string;
   settingsJson?: string;
+  widget?: WidgetSettings;
+  businessHours?: BusinessHoursSettings;
 };
 
 export type WorkspaceDetails = {
@@ -21,6 +44,8 @@ export type WorkspaceDetails = {
   plan: string;
   settingsJson?: string | null;
   createdAt: string;
+  widget?: WidgetSettings | null;
+  businessHours?: BusinessHoursSettings | null;
 };
 
 export type InviteMemberRequest = {

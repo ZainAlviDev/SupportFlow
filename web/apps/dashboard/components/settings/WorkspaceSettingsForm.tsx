@@ -11,6 +11,7 @@ import {
 } from "@supportflow/api-client";
 import { Button, Input, Label } from "@supportflow/ui";
 import { AiLoader } from "@/components/ui/AiLoader";
+import { BusinessHoursEditor } from "@/components/settings/BusinessHoursEditor";
 import { useAuth } from "@/hooks/useAuth";
 import { api } from "@/lib/api";
 import { canManageWorkspace } from "@/lib/workspaceAccess";
@@ -112,8 +113,15 @@ export function WorkspaceSettingsForm() {
 
   if (loadError) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-        {loadError}
+      <div className="space-y-3 rounded-lg border border-red-200 bg-red-50 px-3 py-3 text-sm text-red-700">
+        <p>{loadError}</p>
+        <button
+          type="button"
+          className="text-xs font-medium text-brand-700"
+          onClick={() => window.location.reload()}
+        >
+          Retry
+        </button>
       </div>
     );
   }
@@ -375,6 +383,8 @@ export function WorkspaceSettingsForm() {
           </section>
         </div>
       </div>
+
+      <BusinessHoursEditor />
     </div>
   );
 }

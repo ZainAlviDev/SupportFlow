@@ -25,11 +25,20 @@ public sealed class UpdateCurrentWorkspaceCommandHandler : IRequestHandler<Updat
             throw new UnauthorizedException("Tenant context is required.");
         }
 
+        var role = _currentUserService.Role?.Trim();
+        if (!string.Equals(role, "Owner", StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new UnauthorizedException("Only workspace owners and admins can update settings.");
+        }
+
         return _workspaceService.UpdateCurrentAsync(
             _currentUserService.TenantId.Value,
             request.Name,
             request.Timezone,
             request.SettingsJson,
+            request.Widget,
+            request.BusinessHours,
             cancellationToken);
     }
 }

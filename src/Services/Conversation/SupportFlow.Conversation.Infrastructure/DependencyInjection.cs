@@ -13,6 +13,7 @@ using SupportFlow.Conversation.Application.Common.Interfaces;
 using SupportFlow.Conversation.Infrastructure.Auth;
 using SupportFlow.Conversation.Infrastructure.Conversations;
 using SupportFlow.Conversation.Infrastructure.Customers;
+using SupportFlow.Conversation.Infrastructure.Notifications;
 using SupportFlow.Conversation.Infrastructure.Persistence;
 using SupportFlow.Conversation.Infrastructure.Seeding;
 using SupportFlow.Conversation.Infrastructure.SignalR;
@@ -89,6 +90,7 @@ public static class DependencyInjection
 
         var workspaceBaseUrl = configuration["Services:Workspace"] ?? "http://localhost:5020";
         var customerBaseUrl = configuration["Services:Customer"] ?? "http://localhost:5050";
+        var notificationBaseUrl = configuration["Services:Notification"] ?? "http://localhost:5080";
 
         services.AddHttpClient<IApiKeyValidator, WorkspaceApiKeyValidator>(client =>
         {
@@ -99,6 +101,12 @@ public static class DependencyInjection
         services.AddHttpClient<ICustomerClient, CustomerClient>(client =>
         {
             client.BaseAddress = new Uri(customerBaseUrl.TrimEnd('/') + "/");
+            client.Timeout = TimeSpan.FromSeconds(10);
+        });
+
+        services.AddHttpClient<INotificationClient, NotificationClient>(client =>
+        {
+            client.BaseAddress = new Uri(notificationBaseUrl.TrimEnd('/') + "/");
             client.Timeout = TimeSpan.FromSeconds(10);
         });
 

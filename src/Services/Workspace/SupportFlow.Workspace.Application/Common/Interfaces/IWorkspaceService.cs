@@ -13,5 +13,12 @@ public interface IWorkspaceService
 {
     Task<WorkspaceDto> CreateAsync(Guid tenantId, string name, string? slug, string? timezone, CancellationToken cancellationToken);
     Task<WorkspaceDto> GetCurrentAsync(Guid tenantId, CancellationToken cancellationToken);
-    Task<WorkspaceDto> UpdateCurrentAsync(Guid tenantId, string? name, string? timezone, string? settingsJson, CancellationToken cancellationToken);
+    Task<WorkspaceDto> UpdateCurrentAsync(
+        Guid tenantId,
+        string? name,
+        string? timezone,
+        string? settingsJson,
+        WidgetSettingsDto? widget,
+        BusinessHoursSettingsDto? businessHours,
+        CancellationToken cancellationToken);
 }

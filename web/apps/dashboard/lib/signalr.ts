@@ -9,6 +9,7 @@ import {
 export const SIGNALR_HUBS = {
   conversation: "/hubs/conversation",
   presence: "/hubs/presence",
+  notifications: "/hubs/notifications",
 } as const;
 
 export type SignalRHubName = keyof typeof SIGNALR_HUBS;
@@ -70,6 +71,20 @@ export type ConversationUpdatedPayload = {
 export type OnlineAgent = {
   userId: string;
   displayName?: string | null;
+};
+
+export type NotificationReceivedPayload = {
+  id: string;
+  tenantId: string;
+  userId: string;
+  type: string;
+  title: string;
+  body: string;
+  resourceType?: string | null;
+  resourceId?: string | null;
+  isRead: boolean;
+  readAt?: string | null;
+  createdAt: string;
 };
 
 export function getSignalRUrl(hub: SignalRHubName) {

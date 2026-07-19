@@ -6,4 +6,6 @@ namespace SupportFlow.Workspace.Application.Workspaces.Commands.UpdateCurrentWor
 public sealed record UpdateCurrentWorkspaceCommand(
     string? Name,
     string? Timezone,
-    string? SettingsJson) : IRequest<WorkspaceDto>;
+    string? SettingsJson,
+    WidgetSettingsDto? Widget = null,
+    BusinessHoursSettingsDto? BusinessHours = null) : IRequest<WorkspaceDto>;

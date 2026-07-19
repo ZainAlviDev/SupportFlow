@@ -22,6 +22,9 @@ export type {
   InviteMemberRequest,
   InviteMemberResponse,
   WorkspaceMember,
+  WidgetSettings,
+  BusinessHoursDay,
+  BusinessHoursSettings,
 } from "./workspaces";
 export { listApiKeys, createApiKey, revokeApiKey } from "./api-keys";
 export type { ApiKey, CreatedApiKey, CreateApiKeyPayload } from "./api-keys";
@@ -83,6 +86,17 @@ export type {
 } from "./knowledge";
 export { suggestReply } from "./ai";
 export type { SuggestReplyPayload, SuggestReplyResult, SuggestReplySource } from "./ai";
+export {
+  listNotifications,
+  getUnreadNotificationCount,
+  markNotificationRead,
+  markAllNotificationsRead,
+} from "./notifications";
+export type {
+  NotificationItem,
+  UnreadCount,
+  ListNotificationsParams,
+} from "./notifications";
 export { ApiClient, createApiClient } from "./client";
 export type { ApiClientOptions } from "./client";
 export type * from "./types";
