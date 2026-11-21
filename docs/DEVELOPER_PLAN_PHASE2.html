@@ -1,0 +1,1597 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"/>
+<title>Developer Plan Phase 2 | TechHub</title><style>
+  @page { size: A4; margin: 14mm 12mm; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 9.5pt; color: #1e293b; line-height: 1.5; }
+  .cover { text-align: center; padding: 70px 30px; page-break-after: always;
+    background: linear-gradient(160deg, #f8fafc, #eef2ff); min-height: 88vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .cover img { width: 90px; margin-bottom: 20px; }
+  .cover h1 { font-size: 26px; color: #0f172a; }
+  .cover .team { margin-top: 24px; font-size: 12px; }
+  .cover .team span { display: inline-block; background: #6366f1; color: #fff; padding: 6px 16px; border-radius: 20px; margin: 4px; font-weight: 600; }
+  h1 { font-size: 17px; color: #0f172a; border-bottom: 2px solid #6366f1; padding-bottom: 5px; margin: 24px 0 10px; page-break-after: avoid; }
+  h2 { font-size: 13px; color: #334155; margin: 18px 0 8px; page-break-after: avoid; }
+  h3 { font-size: 11px; margin: 12px 0 6px; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; font-size: 8.5pt; page-break-inside: avoid; }
+  th { background: #6366f1; color: #fff; padding: 5px 8px; text-align: left; }
+  td { padding: 4px 8px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  ul, ol { margin: 6px 0 10px 18px; font-size: 9pt; }
+  li { margin-bottom: 2px; }
+  pre { background: #0f172a; color: #e2e8f0; padding: 10px; border-radius: 6px; font-size: 7.5pt; white-space: pre-wrap; }
+  code { background: #f1f5f9; padding: 1px 4px; border-radius: 3px; font-size: 8pt; }
+  .content h1:first-child { display: none; }
+  strong { color: #0f172a; }
+</style></head><body>
+<div class="cover">
+  
+  <p style="color:#6366f1;font-weight:600;letter-spacing:2px;">TECHHUB</p>
+  <h1>SupportFlow — Phase 2</h1>
+  <p style="font-size:15px;font-weight:500;">Phase 2 Developer Plan</p>
+  <p style="font-size:12px;color:#475569;margin-top:8px;">Version 1.1 · July 2026</p>
+  <div class="team">
+    <span>Zain Alvi</span>
+    <span>Maryam Ali</span>
+    <span>Khadija Asif</span>
+  </div>
+  <p style="margin-top:20px;font-size:10px;color:#64748b;">TechHub · Internal Document · Confidential</p>
+</div>
+<div class="content"><h1>SupportFlow — Phase 2 Developer Plan</h1>
+<p><strong>Organization:</strong> TechHub<br><strong>Product:</strong> SupportFlow — AI Customer Support SaaS Platform<br><strong>Phase:</strong> 2 (Growth &amp; Multi-Channel)<br><strong>Version:</strong> 1.1<br><strong>Date:</strong> July 20, 2026<br><strong>Project Location:</strong> <code>C:\Projects\SupportFlow</code><br><strong>Target Delivery:</strong> 10 weeks (part-time schedule)<br><strong>Prerequisite:</strong> Phase 1 MVP complete and UAT signed off</p>
+<hr>
+<h2>1. Overview</h2>
+<p>This document defines the Phase 2 development plan, task allocation, milestones, and delivery criteria for SupportFlow. It is intended for internal use by the development team and project stakeholders.</p>
+<p>Phase 2 builds on the Phase 1 MVP by adding multi-channel support, file attachments, productivity features, a public help center, basic analytics, automated testing, and staging deployment readiness.</p>
+<p><strong>Team:</strong> Two full-stack developers and one frontend developer. Zain Alvi and Mariyam Ali own full-stack delivery on assigned modules (API + main UI). Khadija Asif supports with <strong>limited</strong> frontend polish only — not full feature UI ownership.</p>
+<hr>
+<h2>2. Team &amp; Working Model</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Role</th>
+<th>Hours / Week</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Zain Alvi</strong></td>
+<td>Full-Stack Developer</td>
+<td><strong>14 hours</strong></td>
+<td>Backend + main frontend on assigned modules; lead full-stack delivery</td>
+</tr>
+<tr>
+<td><strong>Mariyam Ali</strong></td>
+<td>Full-Stack Developer</td>
+<td><strong>7 hours</strong></td>
+<td>Backend + main frontend on assigned modules</td>
+</tr>
+<tr>
+<td><strong>Khadija Asif</strong></td>
+<td>Frontend Developer</td>
+<td><strong>7 hours</strong></td>
+<td>Light frontend support only — badges, empty states, responsive polish</td>
+</tr>
+</tbody></table>
+<p>Zain’s hours are higher because he owns full-stack delivery on more modules (including most feature UI). Mariyam owns full-stack on her modules. <strong>Khadija does not build complete feature pages</strong> — she assists with small UI polish tasks only.</p>
+<h3>2.1 Version Control</h3>
+<table>
+<thead>
+<tr>
+<th>Branch</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>master</code></td>
+<td>Production-ready code</td>
+</tr>
+<tr>
+<td><code>DEV</code></td>
+<td>Integration branch</td>
+</tr>
+<tr>
+<td><code>ZainDev</code></td>
+<td>Zain&#39;s feature work</td>
+</tr>
+<tr>
+<td><code>MariyamDev</code></td>
+<td>Mariyam&#39;s feature work</td>
+</tr>
+<tr>
+<td><code>KhadijaDev</code></td>
+<td>Khadija&#39;s feature work</td>
+</tr>
+</tbody></table>
+<p>All changes merge into <code>DEV</code> via pull request with peer review before integration.</p>
+<h3>2.2 Weekly Schedule by Developer</h3>
+<table>
+<thead>
+<tr>
+<th>Developer</th>
+<th>Weekday</th>
+<th>Weekend</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Zain Alvi</strong></td>
+<td>1.5 hours/day × 5 (Mon–Fri)</td>
+<td>6.5 hours</td>
+<td><strong>14 hours/week</strong></td>
+</tr>
+<tr>
+<td><strong>Mariyam Ali</strong></td>
+<td>1 hour/day × 5 (Mon–Fri)</td>
+<td>2 hours</td>
+<td><strong>7 hours/week</strong></td>
+</tr>
+<tr>
+<td><strong>Khadija Asif</strong></td>
+<td>1 hour/day × 5 (Mon–Fri)</td>
+<td>2 hours</td>
+<td><strong>7 hours/week</strong></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>Period</th>
+<th>Activity</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Monday–Friday</td>
+<td>Stand-up, planning, development</td>
+</tr>
+<tr>
+<td>Weekend (Sat or Sun)</td>
+<td>Deep work, integration, module demo</td>
+</tr>
+</tbody></table>
+<h3>2.3 Module Ownership</h3>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Full-stack owner (API + main UI)</th>
+<th>Khadija (light UI only)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>8 — Attachments</td>
+<td><strong>Zain Alvi</strong></td>
+<td>Responsive polish</td>
+</tr>
+<tr>
+<td>9 — Email channel</td>
+<td><strong>Mariyam Ali</strong></td>
+<td>Channel badge polish</td>
+</tr>
+<tr>
+<td>10 — WhatsApp channel</td>
+<td><strong>Zain Alvi</strong></td>
+<td>Status indicator polish</td>
+</tr>
+<tr>
+<td>11 — Email notifications</td>
+<td><strong>Mariyam Ali</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td>12 — Command palette</td>
+<td><strong>Zain Alvi</strong></td>
+<td>Mobile shortcut button</td>
+</tr>
+<tr>
+<td>13 — Help center</td>
+<td><strong>Mariyam Ali</strong></td>
+<td>Typography / SEO polish</td>
+</tr>
+<tr>
+<td>14 — Analytics</td>
+<td><strong>Zain Alvi</strong></td>
+<td>Chart loading skeletons</td>
+</tr>
+<tr>
+<td>15 — E2E &amp; regression</td>
+<td><strong>Zain Alvi</strong> + <strong>Mariyam Ali</strong></td>
+<td>1–2 simple Playwright flows</td>
+</tr>
+<tr>
+<td>16 — Staging deployment</td>
+<td><strong>Zain Alvi</strong> + <strong>Mariyam Ali</strong></td>
+<td>Staging UI smoke check</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>3. Phase 2 Goals</h2>
+<p>After Phase 2, a business can:</p>
+<ol>
+<li>Send and receive <strong>file attachments</strong> in widget and inbox conversations</li>
+<li>Connect an <strong>email inbox</strong> so customer emails create/update conversations</li>
+<li>Connect <strong>WhatsApp</strong> (Meta Cloud API) as a customer channel</li>
+<li>Receive <strong>email notifications</strong> for assignments and missed messages (in addition to in-app)</li>
+<li>Use a <strong>command palette</strong> (Cmd+K) for fast navigation and actions</li>
+<li>Publish a <strong>public help center</strong> from knowledge base articles</li>
+<li>View <strong>basic analytics</strong> (volume, response time, channel mix)</li>
+<li>Run <strong>Playwright E2E</strong> tests on critical flows in CI</li>
+<li>Deploy to a <strong>staging environment</strong> on Azure with documented runbook</li>
+</ol>
+<hr>
+<h2>4. Phase 2 Scope Summary</h2>
+<h3>4.1 In Scope</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Module</th>
+<th>Weeks</th>
+<th>Full-stack owner</th>
+<th>Khadija (light UI)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>8</td>
+<td>File attachments &amp; blob storage</td>
+<td>1–2</td>
+<td><strong>Zain Alvi</strong></td>
+<td>Responsive polish</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Email channel (inbound + outbound)</td>
+<td>2–4</td>
+<td><strong>Mariyam Ali</strong></td>
+<td>Channel badge</td>
+</tr>
+<tr>
+<td>10</td>
+<td>WhatsApp channel (Meta Cloud API)</td>
+<td>4–6</td>
+<td><strong>Zain Alvi</strong></td>
+<td>Status polish</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Email notifications &amp; digests</td>
+<td>6</td>
+<td><strong>Mariyam Ali</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Command palette &amp; productivity UX</td>
+<td>7</td>
+<td><strong>Zain Alvi</strong></td>
+<td>Mobile shortcut</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Public help center</td>
+<td>7–8</td>
+<td><strong>Mariyam Ali</strong></td>
+<td>SEO / typography polish</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Analytics &amp; reporting</td>
+<td>8–9</td>
+<td><strong>Zain Alvi</strong></td>
+<td>Loading skeletons</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Playwright E2E &amp; regression</td>
+<td>9</td>
+<td>Zain + Mariyam</td>
+<td>1–2 simple flows</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Staging deployment &amp; release prep</td>
+<td>10</td>
+<td>Zain + Mariyam</td>
+<td>Staging smoke check</td>
+</tr>
+</tbody></table>
+<h3>4.2 Out of Scope (Phase 3+)</h3>
+<ul>
+<li>Stripe billing and subscription plans</li>
+<li>SSO (SAML / OIDC)</li>
+<li>Workflow automations and rule engine</li>
+<li>Elasticsearch / advanced search</li>
+<li>SMS channel</li>
+<li>Mobile apps</li>
+<li>AI auto-reply (unsupervised send)</li>
+<li>Multi-language / i18n</li>
+</ul>
+<h3>4.3 Carried Forward from Phase 1 (now in Phase 2)</h3>
+<table>
+<thead>
+<tr>
+<th>Phase 1 deferred item</th>
+<th>Phase 2 module</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>File attachments in chat</td>
+<td>Module 8</td>
+</tr>
+<tr>
+<td>Email notifications</td>
+<td>Module 11</td>
+</tr>
+<tr>
+<td>Command palette (Cmd+K)</td>
+<td>Module 12</td>
+</tr>
+<tr>
+<td>Playwright E2E</td>
+<td>Module 15</td>
+</tr>
+<tr>
+<td>Azure production deployment</td>
+<td>Module 16 (staging first)</td>
+</tr>
+<tr>
+<td>Email channel</td>
+<td>Module 9</td>
+</tr>
+<tr>
+<td>WhatsApp as support channel</td>
+<td>Module 10</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>5. Module 8 — File Attachments &amp; Blob Storage</h2>
+<p><strong>Timeline:</strong> Weeks 1–2<br><strong>Objective:</strong> Agents and customers can attach images and PDFs to messages; files are stored securely per tenant.<br><strong>Full-stack owner:</strong> Zain Alvi</p>
+<h3>5.1 Full-stack (Zain Alvi)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>MessageAttachment</code> entity and EF migration (Conversation service)</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Azure Blob Storage abstraction + MinIO local dev in <code>docker-compose</code></td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td><code>POST /conversations/{id}/messages/attachments</code> upload endpoint (multipart)</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td><code>ProcessAttachmentJob</code> (Hangfire): MIME validation, size limit, image metadata</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Signed URL or gateway proxy for secure download</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>API client: <code>uploadAttachment</code> types in <code>@supportflow/api-client</code></td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Inbox composer: attachment button, upload, progress, and MessageBubble preview</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Widget attachment upload UI</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Tenant isolation tests + Gateway route + Swagger</td>
+<td>Zain Alvi</td>
+</tr>
+</tbody></table>
+<h3>5.2 Light UI (Khadija Asif)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Responsive polish for attachment chips on mobile</td>
+<td>Khadija Asif</td>
+</tr>
+</tbody></table>
+<h3>5.3 Support (Mariyam Ali)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Widget SignalR payload update for attachment metadata</td>
+<td>Mariyam Ali</td>
+</tr>
+</tbody></table>
+<p><strong>Acceptance Criteria</strong></p>
+<ul>
+<li>Agent uploads a PNG in inbox; customer sees it in widget within 2 seconds</li>
+<li>Customer uploads a PDF in widget; agent sees filename and can download</li>
+<li>Tenant A cannot access Tenant B attachment URL (404)</li>
+<li>Max file size 10 MB; rejected types return validation error</li>
+</ul>
+<p><strong>Demo:</strong> End of Week 2</p>
+<hr>
+<h2>6. Module 9 — Email Channel</h2>
+<p><strong>Timeline:</strong> Weeks 2–4<br><strong>Objective:</strong> Workspace connects a support email address; inbound emails create or continue conversations; agent replies send email to the customer.<br><strong>Full-stack owner:</strong> Mariyam Ali</p>
+<h3>6.1 Full-stack (Mariyam Ali)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ChannelType.Email</code> enum extension + conversation <code>channel</code> metadata</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td><code>EmailChannelConfig</code> entity (tenant, inbound address, provider settings JSON)</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Inbound webhook: SendGrid Inbound Parse or MailHog dev adapter</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Parse email → customer match/create → conversation → message</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Outbound: <code>IEmailSender</code> reply with threading headers (<code>In-Reply-To</code>, <code>References</code>)</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Attachment pass-through from email to <code>MessageAttachment</code></td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td><code>POST/GET/PATCH /settings/channels/email</code> CRUD API (Workspace service)</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Background job: retry failed outbound email</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Settings → Channels → Email page (connect, verify, disconnect, empty states)</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Email composer hint + setup wizard stepper</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Swagger + integration tests</td>
+<td>Mariyam Ali</td>
+</tr>
+</tbody></table>
+<h3>6.2 Light UI (Khadija Asif)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Inbox channel badge (email icon) polish on conversation list</td>
+<td>Khadija Asif</td>
+</tr>
+</tbody></table>
+<h3>6.3 Support (Zain Alvi)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Gateway routes for email webhook (public, signed)</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Notification hook: new email conversation → in-app notification</td>
+<td>Zain Alvi</td>
+</tr>
+</tbody></table>
+<p><strong>Acceptance Criteria</strong></p>
+<ul>
+<li>Email sent to workspace support address appears as new conversation in inbox</li>
+<li>Agent reply from inbox delivers email to customer mailbox (MailHog in dev)</li>
+<li>Reply threading keeps messages in the same conversation</li>
+<li>Email channel can be enabled/disabled in settings</li>
+</ul>
+<p><strong>Demo:</strong> End of Week 4</p>
+<hr>
+<h2>7. Module 10 — WhatsApp Channel</h2>
+<p><strong>Timeline:</strong> Weeks 4–6<br><strong>Objective:</strong> Connect WhatsApp Business (Meta Cloud API); customer WhatsApp messages appear in inbox; agents reply from inbox.<br><strong>Full-stack owner:</strong> Zain Alvi</p>
+<h3>7.1 Full-stack (Zain Alvi)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ChannelType.WhatsApp</code> + <code>WhatsAppChannelConfig</code> entity</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Meta webhook verification + inbound message handler</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Map WhatsApp user phone → <code>Customer</code> (E.164)</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Outbound: <code>IWhatsAppMessageSender</code> (text + optional template)</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Reuse Meta Cloud API patterns from Identity forgot-password lane</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td><code>POST/GET/PATCH /settings/channels/whatsapp</code> API</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>24-hour session window handling (template fallback stub)</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Dev: Console sender fallback when Meta credentials missing</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Settings → Channels → WhatsApp page + template picker + connection status</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>WhatsApp channel badge in inbox list and thread header</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Integration tests with mocked Meta API</td>
+<td>Zain Alvi</td>
+</tr>
+</tbody></table>
+<h3>7.2 Light UI (Khadija Asif)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Connection status indicator polish (connected / pending / error styles)</td>
+<td>Khadija Asif</td>
+</tr>
+</tbody></table>
+<h3>7.3 Support (Mariyam Ali)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>API client types for WhatsApp settings</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Customer profile: show WhatsApp number field</td>
+<td>Mariyam Ali</td>
+</tr>
+</tbody></table>
+<p><strong>Reference:</strong> <code>docs/FORGOT_PASSWORD_WHATSAPP_OTP.md</code> for Meta Cloud API setup.</p>
+<p><strong>Acceptance Criteria</strong></p>
+<ul>
+<li>Test WhatsApp message creates conversation in inbox</li>
+<li>Agent reply is delivered to WhatsApp (Meta test number in dev)</li>
+<li>WhatsApp settings page shows connection status</li>
+<li>Console fallback logs outbound messages when Meta is disabled</li>
+</ul>
+<p><strong>Demo:</strong> End of Week 6</p>
+<hr>
+<h2>8. Module 11 — Email Notifications &amp; Digests</h2>
+<p><strong>Timeline:</strong> Week 6<br><strong>Objective:</strong> Agents receive email alerts for key events; notification preferences are configurable.<br><strong>Full-stack owner:</strong> Mariyam Ali</p>
+<h3>8.1 Full-stack (Mariyam Ali)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SendEmailNotificationJob</code> (Hangfire) wired to Notification events</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Notification preferences entity (per user: email on/off per type)</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td><code>GET/PATCH /notifications/preferences</code> API</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Email templates: assignment, new message (when offline), daily digest stub</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Respect user preferences before send</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Settings → Notifications page (toggles, save, toasts)</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Link from notification bell dropdown to preferences</td>
+<td>Mariyam Ali</td>
+</tr>
+</tbody></table>
+<h3>8.2 Support (Zain Alvi)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Trigger email job from Conversation/Ticket assignment events</td>
+<td>Zain Alvi</td>
+</tr>
+</tbody></table>
+<p><strong>Note:</strong> No Khadija tasks on this module.</p>
+<p><strong>Acceptance Criteria</strong></p>
+<ul>
+<li>Assign conversation → assignee receives email (MailHog) when preference enabled</li>
+<li>Disable &quot;new message&quot; email → no email on new customer message</li>
+<li>In-app notifications still work independently of email</li>
+</ul>
+<p><strong>Demo:</strong> End of Week 6</p>
+<hr>
+<h2>9. Module 12 — Command Palette &amp; Productivity UX</h2>
+<p><strong>Timeline:</strong> Week 7<br><strong>Objective:</strong> Cmd+K (Ctrl+K) opens a command palette for navigation, search, and quick actions.<br><strong>Full-stack owner:</strong> Zain Alvi</p>
+<h3>9.1 Full-stack (Zain Alvi)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>GET /search?q=</code> unified search API (conversations, tickets, customers)</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Tenant-scoped search with pagination</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>API client <code>searchWorkspace</code></td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td><code>CommandPalette</code> component (sections, actions, fuzzy filter, dark mode)</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Global keyboard shortcut Cmd+K / Ctrl+K</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Swagger + integration tests</td>
+<td>Zain Alvi</td>
+</tr>
+</tbody></table>
+<h3>9.2 Light UI (Khadija Asif)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Mobile header shortcut button to open palette</td>
+<td>Khadija Asif</td>
+</tr>
+</tbody></table>
+<h3>9.3 Support (Mariyam Ali)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Peer review of search API contract</td>
+<td>Mariyam Ali</td>
+</tr>
+</tbody></table>
+<p><strong>Acceptance Criteria</strong></p>
+<ul>
+<li>Cmd+K opens palette from any dashboard page</li>
+<li>Typing searches customers and tickets with live results</li>
+<li>Selecting a result navigates to the correct detail page</li>
+<li>Escape closes palette</li>
+</ul>
+<p><strong>Demo:</strong> End of Week 7</p>
+<hr>
+<h2>10. Module 13 — Public Help Center</h2>
+<p><strong>Timeline:</strong> Weeks 7–8<br><strong>Objective:</strong> Published knowledge articles are available on a public, branded help center URL per workspace.<br><strong>Full-stack owner:</strong> Mariyam Ali</p>
+<h3>10.1 Full-stack (Mariyam Ali)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>HelpCenterSettings</code> (slug, enabled, branding overrides) in Workspace service</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Public routes: <code>GET /public/{slug}/articles</code>, <code>GET /public/{slug}/articles/{id}</code></td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Only <code>Published</code> articles exposed; HTML sanitization on render</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Optional: public article search (SQL <code>LIKE</code> / full-text)</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Cache headers for public pages</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Help center app/routes: home, article detail, branding</td>
+<td>Mariyam Ali</td>
+</tr>
+<tr>
+<td>Settings → Help Center (slug, enable, copy public URL)</td>
+<td>Mariyam Ali</td>
+</tr>
+</tbody></table>
+<h3>10.2 Light UI (Khadija Asif)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Typography and SEO meta tag polish on article pages</td>
+<td>Khadija Asif</td>
+</tr>
+</tbody></table>
+<h3>10.3 Support (Zain Alvi)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Gateway public routes (no JWT; rate limit)</td>
+<td>Zain Alvi</td>
+</tr>
+</tbody></table>
+<p><strong>Acceptance Criteria</strong></p>
+<ul>
+<li>Publish article in dashboard → visible on <code>https://help.localhost/{slug}</code></li>
+<li>Draft articles are not publicly accessible</li>
+<li>Help center reflects workspace primary color</li>
+<li>Public URL shown in settings with copy button</li>
+</ul>
+<p><strong>Demo:</strong> End of Week 8</p>
+<hr>
+<h2>11. Module 14 — Analytics &amp; Reporting</h2>
+<p><strong>Timeline:</strong> Weeks 8–9<br><strong>Objective:</strong> Owners and admins see conversation volume, response metrics, and channel breakdown.<br><strong>Full-stack owner:</strong> Zain Alvi</p>
+<h3>11.1 Full-stack (Zain Alvi)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>AnalyticsSnapshot</code> queries (read-only, tenant-scoped)</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td><code>GET /analytics/overview?from=&amp;to=</code> (conversations, messages, tickets)</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td><code>GET /analytics/agents</code> (assigned count, avg first response time)</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td><code>GET /analytics/channels</code> (web chat, email, WhatsApp mix)</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Optional nightly rollup job for heavy aggregates</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Analytics page: sidebar entry, date range, KPI cards, charts</td>
+<td>Zain Alvi</td>
+</tr>
+<tr>
+<td>Role guard: Owner/Admin only + API client types</td>
+<td>Zain Alvi</td>
+</tr>
+</tbody></table>
+<h3>11.2 Light UI (Khadija Asif)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Loading skeletons and empty-state polish for analytics cards</td>
+<td>Khadija Asif</td>
+</tr>
+</tbody></table>
+<h3>11.3 Support (Mariyam Ali)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Peer review of analytics endpoints</td>
+<td>Mariyam Ali</td>
+</tr>
+</tbody></table>
+<p><strong>Acceptance Criteria</strong></p>
+<ul>
+<li>Analytics page loads in &lt; 2s for 30-day range (dev data)</li>
+<li>Channel chart reflects email and WhatsApp conversations after Module 9–10</li>
+<li>Agents without admin role cannot access analytics</li>
+</ul>
+<p><strong>Demo:</strong> End of Week 9</p>
+<hr>
+<h2>12. Module 15 — Playwright E2E &amp; Regression</h2>
+<p><strong>Timeline:</strong> Week 9<br><strong>Objective:</strong> Critical user flows run automatically in CI; Phase 2 regression checklist completed.</p>
+<h3>12.1 E2E &amp; tests (Zain Alvi + Mariyam Ali)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Zain Alvi</th>
+<th>Mariyam Ali</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Playwright project setup in <code>web/e2e</code></td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Flow 1: Register → login → inbox</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Flow 2: Widget message → agent reply</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Flow 3: Create ticket from conversation</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Flow 4: Upload attachment → visible in thread</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Test seed script (<code>scripts/seed-e2e.ps1</code>)</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Expand tenant isolation tests for new endpoints</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Module 8–14 API integration tests</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>CI job: run E2E on PR to <code>DEV</code></td>
+<td>✓</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3>12.2 Light support (Khadija Asif)</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Flow 5: Command palette navigation (simple Playwright flow)</td>
+<td>Khadija Asif</td>
+</tr>
+<tr>
+<td>Add <code>data-testid</code> on 2–3 UI elements she polished</td>
+<td>Khadija Asif</td>
+</tr>
+</tbody></table>
+<h3>12.3 Regression checklist</h3>
+<p>Use an extended checklist based on <code>docs/MODULE7_REGRESSION_AND_DEMO.md</code> plus Phase 2 scenarios (email, WhatsApp, attachments, help center, analytics).</p>
+<p><strong>Acceptance Criteria</strong></p>
+<ul>
+<li>5 Playwright flows pass locally and in CI</li>
+<li>No P0/P1 bugs open for Phase 2 scope</li>
+<li>Tenant isolation tests pass for all new APIs</li>
+</ul>
+<p><strong>Demo:</strong> End of Week 9</p>
+<hr>
+<h2>13. Module 16 — Staging Deployment &amp; Release Prep</h2>
+<p><strong>Timeline:</strong> Week 10<br><strong>Objective:</strong> Deploy full stack to Azure staging; document runbook for client UAT.</p>
+<h3>13.1 Tasks</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Zain Alvi</th>
+<th>Mariyam Ali</th>
+<th>Khadija Asif</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Azure Container Apps staging environment</td>
+<td>✓</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Azure Blob Storage (attachments)</td>
+<td>✓</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Azure SQL / existing SQL Server staging DB</td>
+<td></td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>SendGrid or Azure Communication Services (email)</td>
+<td></td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>GitHub Actions: deploy staging on merge to <code>DEV</code></td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Environment variable documentation</td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Staging smoke test script</td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Frontend build against staging API</td>
+<td>✓</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Help center staging URL verification</td>
+<td></td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Staging UI smoke check (login + inbox open)</td>
+<td></td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Client UAT script (Phase 2)</td>
+<td>Shared</td>
+<td>Shared</td>
+<td></td>
+</tr>
+</tbody></table>
+<p><strong>Acceptance Criteria</strong></p>
+<ul>
+<li>Staging URL accessible for dashboard, API, and help center</li>
+<li>Widget embed works against staging API</li>
+<li>All Phase 2 acceptance criteria pass on staging</li>
+<li>Runbook in <code>docs/STAGING_RUNBOOK.md</code> (created in this module)</li>
+</ul>
+<p><strong>Demo:</strong> End of Week 10 — Phase 2 client UAT</p>
+<hr>
+<h2>14. Weekly Milestone Schedule</h2>
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Focus</th>
+<th>Milestone</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Module 8 started</td>
+<td>Blob storage running; upload API in progress</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Module 8 complete; Module 9 started</td>
+<td>Attachments end-to-end; email channel design</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Module 9</td>
+<td>Inbound email → conversation</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Module 9 complete; Module 10 started</td>
+<td>Outbound email reply; WhatsApp webhook</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Module 10</td>
+<td>WhatsApp inbound/outbound</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Module 10 complete; Module 11</td>
+<td>WhatsApp demo; email notifications live</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Modules 12 + 13 started</td>
+<td>Command palette; help center scaffold</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Module 13 complete; Module 14 started</td>
+<td>Public help center; analytics API</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Modules 14 + 15</td>
+<td>Analytics UI; Playwright in CI</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Module 16</td>
+<td><strong>Staging deployment &amp; Phase 2 UAT</strong></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>15. Progress Tracker</h2>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Zain Alvi</th>
+<th>Mariyam Ali</th>
+<th>Khadija Asif</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>8 — Attachments</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Not started</td>
+</tr>
+<tr>
+<td>9 — Email channel</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Not started</td>
+</tr>
+<tr>
+<td>10 — WhatsApp channel</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Not started</td>
+</tr>
+<tr>
+<td>11 — Email notifications</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Not started</td>
+</tr>
+<tr>
+<td>12 — Command palette</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Not started</td>
+</tr>
+<tr>
+<td>13 — Help center</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Not started</td>
+</tr>
+<tr>
+<td>14 — Analytics</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Not started</td>
+</tr>
+<tr>
+<td>15 — E2E &amp; regression</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Not started</td>
+</tr>
+<tr>
+<td>16 — Staging deployment</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Not started</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>16. Task Matrix (Quick Reference)</h2>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th align="center">Zain Alvi</th>
+<th align="center">Mariyam Ali</th>
+<th align="center">Khadija Asif</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Module 8 — Attachments</strong></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Blob storage + upload API + inbox/widget UI</td>
+<td align="center">✓ FS</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Widget SignalR attachment metadata</td>
+<td align="center"></td>
+<td align="center">✓</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Responsive attachment polish</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">✓ light</td>
+</tr>
+<tr>
+<td><strong>Module 9 — Email</strong></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Email channel API + settings page UI</td>
+<td align="center"></td>
+<td align="center">✓ FS</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Gateway webhook + notification hook</td>
+<td align="center">✓</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Email channel badge polish</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">✓ light</td>
+</tr>
+<tr>
+<td><strong>Module 10 — WhatsApp</strong></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>WhatsApp API + settings page UI</td>
+<td align="center">✓ FS</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Customer phone field + API client</td>
+<td align="center"></td>
+<td align="center">✓</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Status indicator polish</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">✓ light</td>
+</tr>
+<tr>
+<td><strong>Module 11 — Email notifications</strong></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Jobs + preferences API + settings UI</td>
+<td align="center"></td>
+<td align="center">✓ FS</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Assignment event hooks</td>
+<td align="center">✓</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td><strong>Module 12 — Command palette</strong></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Search API + CommandPalette UI</td>
+<td align="center">✓ FS</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Mobile shortcut button</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">✓ light</td>
+</tr>
+<tr>
+<td><strong>Module 13 — Help center</strong></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Public API + help center pages</td>
+<td align="center"></td>
+<td align="center">✓ FS</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Gateway public routes</td>
+<td align="center">✓</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Typography / SEO polish</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">✓ light</td>
+</tr>
+<tr>
+<td><strong>Module 14 — Analytics</strong></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Analytics APIs + dashboard page</td>
+<td align="center">✓ FS</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Loading skeleton polish</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">✓ light</td>
+</tr>
+<tr>
+<td><strong>Module 15 — E2E</strong></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Playwright setup + main flows + CI</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>1 simple flow + a few testids</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">✓ light</td>
+</tr>
+<tr>
+<td>Integration / tenant tests</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td><strong>Module 16 — Deployment</strong></td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">✓ light</td>
+</tr>
+</tbody></table>
+<p><em>FS = full-stack owner (API + main UI). light = small polish only.</em></p>
+<hr>
+<h2>17. Technical Notes</h2>
+<h3>17.1 New or Extended Services</h3>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Service</th>
+<th>Change</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Attachments</td>
+<td>Conversation</td>
+<td><code>MessageAttachment</code>, blob upload</td>
+</tr>
+<tr>
+<td>Email channel</td>
+<td>Conversation + Workspace</td>
+<td>Inbound webhook, outbound sender</td>
+</tr>
+<tr>
+<td>WhatsApp channel</td>
+<td>Conversation + Workspace</td>
+<td>Meta webhook, outbound sender</td>
+</tr>
+<tr>
+<td>Email notifications</td>
+<td>Notification</td>
+<td>Preferences + Hangfire email jobs</td>
+</tr>
+<tr>
+<td>Search</td>
+<td>New or Gateway aggregation</td>
+<td>Unified search endpoint</td>
+</tr>
+<tr>
+<td>Help center</td>
+<td>Knowledge + Workspace</td>
+<td>Public read-only routes</td>
+</tr>
+<tr>
+<td>Analytics</td>
+<td>New read models or Ticket/Conversation</td>
+<td>Aggregate queries</td>
+</tr>
+</tbody></table>
+<h3>17.2 Local Development Additions</h3>
+<pre><code class="language-powershell"># MinIO (S3-compatible) for attachments — added in Module 8
+docker compose up -d
+
+# Widget + dashboard
+cd web
+npm run dev:dashboard
+npm run dev:widget
+
+# E2E (Module 15)
+npm run test:e2e
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MinIO console</td>
+<td><a href="http://localhost:9001">http://localhost:9001</a></td>
+</tr>
+<tr>
+<td>MailHog</td>
+<td><a href="http://localhost:8025">http://localhost:8025</a></td>
+</tr>
+<tr>
+<td>Help center (dev)</td>
+<td><a href="http://localhost:3001">http://localhost:3001</a> (or dashboard sub-route)</td>
+</tr>
+</tbody></table>
+<h3>17.3 Security Checklist (Phase 2)</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Attachment access</td>
+<td>Tenant-scoped signed URLs; short TTL</td>
+</tr>
+<tr>
+<td>Email webhook</td>
+<td>HMAC signature verification</td>
+</tr>
+<tr>
+<td>WhatsApp webhook</td>
+<td>Meta verify token + signature</td>
+</tr>
+<tr>
+<td>Public help center</td>
+<td>No PII; published articles only; rate limit</td>
+</tr>
+<tr>
+<td>Analytics</td>
+<td>Owner/Admin role only</td>
+</tr>
+<tr>
+<td>Secrets</td>
+<td>Azure Key Vault / user-secrets; never commit</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>18. Client Demo Script (Week 10)</h2>
+<ol>
+<li><strong>Attachments:</strong> Customer sends image via widget → agent views and downloads</li>
+<li><strong>Email:</strong> Forward email to support address → appears in inbox → agent replies → customer receives email</li>
+<li><strong>WhatsApp:</strong> Send WhatsApp to connected number → conversation in inbox → agent replies</li>
+<li><strong>Email notifications:</strong> Assign conversation → assignee receives email alert</li>
+<li><strong>Command palette:</strong> Cmd+K → search customer → jump to profile</li>
+<li><strong>Help center:</strong> Open public URL → browse published articles</li>
+<li><strong>Analytics:</strong> Show 30-day volume, response time, channel breakdown</li>
+<li><strong>Regression:</strong> Run Phase 1 demo script (<code>MODULE7_REGRESSION_AND_DEMO.md</code>) on staging</li>
+</ol>
+<hr>
+<h2>19. Definition of Done (Phase 2)</h2>
+<ul>
+<li><input disabled="" type="checkbox"> All module acceptance criteria met</li>
+<li><input disabled="" type="checkbox"> Swagger updated for every new endpoint</li>
+<li><input disabled="" type="checkbox"> Tenant isolation tests for new tenant-scoped APIs</li>
+<li><input disabled="" type="checkbox"> Full-stack owners (Zain / Mariyam) sign off on feature UI for their modules</li>
+<li><input disabled="" type="checkbox"> Khadija sign-off on light polish items assigned to her</li>
+<li><input disabled="" type="checkbox"> Playwright E2E: 5 flows passing</li>
+<li><input disabled="" type="checkbox"> Staging deployment healthy</li>
+<li><input disabled="" type="checkbox"> <code>docs/STAGING_RUNBOOK.md</code> complete</li>
+<li><input disabled="" type="checkbox"> Phase 2 progress tracker updated</li>
+<li><input disabled="" type="checkbox"> Client UAT script executed on staging</li>
+</ul>
+<hr>
+<h2>20. Related Documentation</h2>
+<table>
+<thead>
+<tr>
+<th>Document</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>docs/DEVELOPER_PLAN_PHASE1.md</code></td>
+<td>Phase 1 plan (complete)</td>
+</tr>
+<tr>
+<td><code>docs/TECHNICAL_ROADMAP_PHASE1.md</code></td>
+<td>Phase 1 technical spec</td>
+</tr>
+<tr>
+<td><code>docs/MODULE7_REGRESSION_AND_DEMO.md</code></td>
+<td>Phase 1 regression checklist</td>
+</tr>
+<tr>
+<td><code>docs/FORGOT_PASSWORD_WHATSAPP_OTP.md</code></td>
+<td>Meta WhatsApp API reference</td>
+</tr>
+<tr>
+<td><code>docs/GHCR_CI_SETUP_GUIDE.md</code></td>
+<td>Container registry CI</td>
+</tr>
+<tr>
+<td><code>docs/PROJECT_GUIDE.md</code></td>
+<td>Local setup guide</td>
+</tr>
+</tbody></table>
+<hr>
+<p><strong>Document Control</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Author</td>
+<td>TechHub Development Team</td>
+</tr>
+<tr>
+<td>Version</td>
+<td>1.1</td>
+</tr>
+<tr>
+<td>Classification</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td>Last Updated</td>
+<td>July 20, 2026</td>
+</tr>
+</tbody></table>
+<hr>
+<p><em>© 2026 TechHub. All rights reserved. Internal use only.</em></p>
+</div></body></html>

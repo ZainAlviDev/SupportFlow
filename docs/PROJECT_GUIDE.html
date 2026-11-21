@@ -1,0 +1,908 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"/>
+<title>SupportFlow Project Guide</title><style>
+  @page { size: A4; margin: 12mm 10mm; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 8.5pt; color: #1e293b; line-height: 1.45; }
+  .cover { text-align: center; padding: 60px 30px; page-break-after: always;
+    background: linear-gradient(160deg, #eef2ff, #f0fdf4); min-height: 88vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .cover h1 { font-size: 22px; color: #0f172a; margin: 12px 0; }
+  .cover .badge { display: inline-block; background: #4f46e5; color: #fff; padding: 5px 14px;
+    border-radius: 20px; font-weight: 600; font-size: 10px; margin: 3px; }
+  h1 { font-size: 14px; color: #0f172a; border-bottom: 2px solid #4f46e5; padding-bottom: 4px;
+    margin: 18px 0 8px; page-break-after: avoid; }
+  h2 { font-size: 11.5px; color: #334155; margin: 14px 0 6px; page-break-after: avoid; }
+  h3 { font-size: 10px; margin: 10px 0 4px; color: #475569; }
+  table { width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 7.5pt; page-break-inside: avoid; }
+  th { background: #4f46e5; color: #fff; padding: 4px 6px; text-align: left; }
+  td { padding: 3px 6px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  ul, ol { margin: 4px 0 8px 16px; font-size: 8pt; }
+  li { margin-bottom: 2px; }
+  pre { background: #0f172a; color: #e2e8f0; padding: 8px; border-radius: 6px;
+    font-size: 7pt; white-space: pre-wrap; page-break-inside: avoid; }
+  code { background: #f1f5f9; padding: 1px 3px; border-radius: 3px; font-size: 7pt; }
+  .content h1:first-child { display: none; }
+  strong { color: #0f172a; }
+  hr { border: none; border-top: 1px solid #e2e8f0; margin: 12px 0; }
+</style></head><body>
+<div class="cover">
+  <p style="color:#4f46e5;font-weight:600;letter-spacing:2px;">TECHHUB · SUPPORTFLOW</p>
+  <h1>Complete Project Guide</h1>
+  <p style="font-size:12px;color:#475569;">Backend + Frontend + Docker + CI/CD</p>
+  <p style="font-size:10px;color:#64748b;">Version 1.0 · July 2026</p>
+  <div style="margin-top:20px;">
+    <span class="badge">VS Code Setup</span>
+    <span class="badge">All Files Explained</span>
+    <span class="badge">Next.js + .NET 8</span>
+  </div>
+</div>
+<div class="content"><h1>SupportFlow — Complete Project Guide</h1>
+<p><strong>Repository:</strong> <code>https://github.com/merium6/SupportFlow</code><br><strong>Version:</strong> 1.0 · July 2026<br><strong>Team:</strong> TechHub · Zain Ali · Maryam Ali</p>
+<hr>
+<h2>Part 1 — VS Code mein kaise chalayein (START HERE)</h2>
+<h3>Pehli dafa setup</h3>
+<ol>
+<li><strong>VS Code kholo</strong> → <strong>File → Open Folder</strong> → <code>C:\Projects\SupportFlow</code></li>
+<li>Extensions install karo (popup aaye to Install dabao):<ul>
+<li><strong>C# Dev Kit</strong> — backend .NET</li>
+<li><strong>Docker</strong> — Postgres, Redis containers</li>
+<li><strong>ESLint</strong> + <strong>Tailwind CSS IntelliSense</strong> — frontend</li>
+</ul>
+</li>
+<li><strong>Terminal</strong> kholo: <code>Ctrl + `</code></li>
+</ol>
+<pre><code class="language-powershell"># --- Infrastructure (Docker) ---
+docker compose up -d
+.\scripts\redis-seed-config.ps1
+
+# --- Frontend (ek dafa) ---
+cd web
+npm install
+copy apps\dashboard\.env.example apps\dashboard\.env.local
+cd ..
+</code></pre>
+<h3>Sirf Frontend chalana</h3>
+<pre><code class="language-powershell">cd C:\Projects\SupportFlow\web
+npm run dev:dashboard
+</code></pre>
+<p>Browser: <strong><a href="http://localhost:3000">http://localhost:3000</a></strong><br>Login: <a href="http://localhost:3000/login">http://localhost:3000/login</a> (placeholder — koi bhi email/password)</p>
+<p><strong>VS Code shortcut:</strong> <code>Ctrl+Shift+P</code> → <strong>Tasks: Run Task</strong> → <strong>Frontend: Dashboard (Next.js)</strong></p>
+<h3>Sirf Backend chalana</h3>
+<pre><code class="language-powershell">cd C:\Projects\SupportFlow
+dotnet build
+.\scripts\run-all.ps1
+</code></pre>
+<p>Health check: <strong><a href="http://localhost:5000/health">http://localhost:5000/health</a></strong></p>
+<p><strong>VS Code shortcut:</strong> <code>F5</code> → dropdown se <strong>Gateway (:5000)</strong> ya <strong>Backend: Gateway + Identity</strong></p>
+<h3>Poora stack (Frontend + Backend)</h3>
+<table>
+<thead>
+<tr>
+<th>Terminal</th>
+<th>Command</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><code>docker compose up -d</code></td>
+<td>Postgres :5432, Redis :6379, MailHog :8025</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>.\scripts\run-all.ps1</code></td>
+<td>Gateway :5000, APIs :5010–5080</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>cd web</code> → <code>npm run dev:dashboard</code></td>
+<td>Dashboard :3000</td>
+</tr>
+<tr>
+<td>4 (optional)</td>
+<td><code>cd web</code> → <code>npm run dev:widget</code></td>
+<td>Widget :4173</td>
+</tr>
+</tbody></table>
+<h3>Useful VS Code files</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Kya karta hai</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>.vscode/launch.json</code></td>
+<td>F5 se backend debug (Gateway, Identity, etc.)</td>
+</tr>
+<tr>
+<td><code>.vscode/tasks.json</code></td>
+<td>Docker, backend, frontend tasks</td>
+</tr>
+<tr>
+<td><code>.vscode/extensions.json</code></td>
+<td>Recommended extensions list</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Part 2 — Project overview</h2>
+<p>SupportFlow ek <strong>AI Customer Support SaaS</strong> hai — microservices backend + Next.js dashboard + embeddable chat widget.</p>
+<pre><code>                    ┌─────────────────────┐
+                    │  Next.js Dashboard  │  :3000
+                    │  (web/apps/dashboard)│
+                    └──────────┬──────────┘
+                               │ HTTP /api/v1
+                    ┌──────────▼──────────┐
+                    │   YARP Gateway      │  :5000
+                    │   (src/Gateway)     │
+                    └──────────┬──────────┘
+           ┌───────────────────┼───────────────────┐
+           ▼         ▼         ▼         ▼           ▼
+      Identity  Workspace  Conversation  Ticket  ... (8 APIs)
+       :5010     :5020        :5030       :5040
+
+      ┌──────────────┐     ┌──────────────────────┐
+      │ Vite Widget  │     │ Docker: Postgres,    │
+      │   :4173      │     │ Redis, MailHog       │
+      └──────────────┘     └──────────────────────┘
+</code></pre>
+<hr>
+<h2>Part 3 — Root folder files</h2>
+<table>
+<thead>
+<tr>
+<th>File / Folder</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SupportFlow.sln</code></td>
+<td>Visual Studio solution — saare 35 .NET projects</td>
+</tr>
+<tr>
+<td><code>README.md</code></td>
+<td>Quick start, ports, architecture summary</td>
+</tr>
+<tr>
+<td><code>CONFIG.md</code></td>
+<td>GitHub Actions + GHCR setup guide</td>
+</tr>
+<tr>
+<td><code>docker-compose.yml</code></td>
+<td>Local infra: Postgres, Redis, MailHog</td>
+</tr>
+<tr>
+<td><code>docker-compose.staging.yml</code></td>
+<td>Staging deploy — GHCR images pull karta hai</td>
+</tr>
+<tr>
+<td><code>.dockerignore</code></td>
+<td>Docker build se exclude files</td>
+</tr>
+<tr>
+<td><code>GatewayDockerfile</code></td>
+<td>Gateway service Docker image</td>
+</tr>
+<tr>
+<td><code>IdentityDockerfile</code></td>
+<td>Identity API Docker image</td>
+</tr>
+<tr>
+<td><code>WorkspaceDockerfile</code></td>
+<td>Workspace API Docker image</td>
+</tr>
+<tr>
+<td><code>ConversationDockerfile</code></td>
+<td>Conversation API Docker image</td>
+</tr>
+<tr>
+<td><code>TicketDockerfile</code></td>
+<td>Ticket API Docker image</td>
+</tr>
+<tr>
+<td><code>CustomerDockerfile</code></td>
+<td>Customer API Docker image</td>
+</tr>
+<tr>
+<td><code>KnowledgeDockerfile</code></td>
+<td>Knowledge API Docker image</td>
+</tr>
+<tr>
+<td><code>AIDockerfile</code></td>
+<td>AI API Docker image</td>
+</tr>
+<tr>
+<td><code>NotificationDockerfile</code></td>
+<td>Notification API Docker image</td>
+</tr>
+<tr>
+<td><code>.github/workflows/build-and-push-images.yml</code></td>
+<td>CI/CD — PR merge par GHCR push</td>
+</tr>
+<tr>
+<td><code>.vscode/</code></td>
+<td>VS Code launch, tasks, extensions</td>
+</tr>
+<tr>
+<td><code>docs/</code></td>
+<td>Developer plans, guides, PDFs</td>
+</tr>
+<tr>
+<td><code>scripts/</code></td>
+<td>PowerShell helper scripts</td>
+</tr>
+<tr>
+<td><code>src/</code></td>
+<td>Backend .NET microservices</td>
+</tr>
+<tr>
+<td><code>web/</code></td>
+<td>Frontend monorepo (Next.js + Vite)</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Part 4 — Backend (<code>src/</code>)</h2>
+<h3>4.1 Structure pattern (har service same)</h3>
+<pre><code>src/Services/{Name}/
+├── SupportFlow.{Name}.Api            ← HTTP entry, Controllers, Program.cs
+├── SupportFlow.{Name}.Application    ← MediatR commands/queries, validators
+├── SupportFlow.{Name}.Domain         ← Entities, interfaces
+└── SupportFlow.{Name}.Infrastructure ← EF Core, external services
+</code></pre>
+<h3>4.2 Gateway</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>src/Gateway/SupportFlow.Gateway/Program.cs</code></td>
+<td>YARP reverse proxy startup</td>
+</tr>
+<tr>
+<td><code>src/Gateway/SupportFlow.Gateway/appsettings.json</code></td>
+<td>Routes to 8 services, ports</td>
+</tr>
+<tr>
+<td><code>src/Gateway/SupportFlow.Gateway/Services/GatewayHealthService.cs</code></td>
+<td>Aggregates all service health</td>
+</tr>
+</tbody></table>
+<p><strong>Port:</strong> 5000<br><strong>Routes:</strong> <code>/api/v1/auth/*</code>, <code>/workspaces/*</code>, <code>/conversations/*</code>, etc.</p>
+<h3>4.3 Shared libraries</h3>
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>src/Shared/SupportFlow.Shared.Kernel</code></td>
+<td>BaseEntity, ITenantEntity</td>
+</tr>
+<tr>
+<td><code>src/Shared/SupportFlow.Shared.Contracts</code></td>
+<td>Shared DTOs (HealthCheckResponse)</td>
+</tr>
+</tbody></table>
+<h3>4.4 Microservices (8 services)</h3>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Port</th>
+<th>API Project</th>
+<th>Gateway route</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Identity</td>
+<td>5010</td>
+<td><code>SupportFlow.Identity.Api</code></td>
+<td><code>/api/v1/auth/*</code></td>
+</tr>
+<tr>
+<td>Workspace</td>
+<td>5020</td>
+<td><code>SupportFlow.Workspace.Api</code></td>
+<td><code>/api/v1/workspaces/*</code></td>
+</tr>
+<tr>
+<td>Conversation</td>
+<td>5030</td>
+<td><code>SupportFlow.Conversation.Api</code></td>
+<td><code>/api/v1/conversations/*</code>, <code>/widget/*</code></td>
+</tr>
+<tr>
+<td>Ticket</td>
+<td>5040</td>
+<td><code>SupportFlow.Ticket.Api</code></td>
+<td><code>/api/v1/tickets/*</code></td>
+</tr>
+<tr>
+<td>Customer</td>
+<td>5050</td>
+<td><code>SupportFlow.Customer.Api</code></td>
+<td><code>/api/v1/customers/*</code></td>
+</tr>
+<tr>
+<td>Knowledge</td>
+<td>5060</td>
+<td><code>SupportFlow.Knowledge.Api</code></td>
+<td><code>/api/v1/knowledge/*</code></td>
+</tr>
+<tr>
+<td>AI</td>
+<td>5070</td>
+<td><code>SupportFlow.AI.Api</code></td>
+<td><code>/api/v1/ai/*</code></td>
+</tr>
+<tr>
+<td>Notification</td>
+<td>5080</td>
+<td><code>SupportFlow.Notification.Api</code></td>
+<td><code>/api/v1/notifications/*</code></td>
+</tr>
+</tbody></table>
+<p><strong>Har API mein abhi:</strong></p>
+<ul>
+<li><code>Program.cs</code> — app startup</li>
+<li><code>Controllers/HealthController.cs</code> — health endpoint</li>
+<li><code>Application/Health/Queries/</code> — MediatR health query</li>
+<li><code>Application/DependencyInjection.cs</code> — MediatR + FluentValidation register</li>
+<li><code>Infrastructure/DependencyInjection.cs</code> — infrastructure services</li>
+</ul>
+<hr>
+<h2>Part 5 — Frontend (<code>web/</code>)</h2>
+<h3>5.1 Monorepo root</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>web/package.json</code></td>
+<td>Turborepo root, workspaces config</td>
+</tr>
+<tr>
+<td><code>web/turbo.json</code></td>
+<td>Build/dev task pipeline</td>
+</tr>
+<tr>
+<td><code>web/README.md</code></td>
+<td>Frontend quick start</td>
+</tr>
+<tr>
+<td><code>web/package-lock.json</code></td>
+<td>Locked dependency versions</td>
+</tr>
+</tbody></table>
+<h3>5.2 Shared packages</h3>
+<h4><code>web/packages/ui/</code> — Shared UI components</h4>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>src/button.tsx</code></td>
+<td>Primary/secondary/ghost button</td>
+</tr>
+<tr>
+<td><code>src/card.tsx</code></td>
+<td>Card, CardHeader, CardContent</td>
+</tr>
+<tr>
+<td><code>src/input.tsx</code></td>
+<td>Form text input</td>
+</tr>
+<tr>
+<td><code>src/label.tsx</code></td>
+<td>Form label</td>
+</tr>
+<tr>
+<td><code>src/globals.css</code></td>
+<td>Tailwind base imports</td>
+</tr>
+<tr>
+<td><code>src/index.ts</code></td>
+<td>Package exports</td>
+</tr>
+</tbody></table>
+<h4><code>web/packages/api-client/</code> — API client</h4>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>src/routes.ts</code></td>
+<td>Gateway API paths (<code>/auth/login</code>, <code>/tickets</code>, etc.)</td>
+</tr>
+<tr>
+<td><code>src/types.ts</code></td>
+<td>TypeScript types (User, Workspace, AuthTokens)</td>
+</tr>
+<tr>
+<td><code>src/client.ts</code></td>
+<td><code>ApiClient</code> class — fetch + Bearer token</td>
+</tr>
+<tr>
+<td><code>src/index.ts</code></td>
+<td>Package exports</td>
+</tr>
+</tbody></table>
+<h3>5.3 Dashboard app (<code>web/apps/dashboard/</code>)</h3>
+<p>Next.js 15 App Router — agent dashboard.</p>
+<h4>Config files</h4>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>package.json</code></td>
+<td>Dependencies: Next.js, React, Zustand</td>
+</tr>
+<tr>
+<td><code>next.config.ts</code></td>
+<td>Transpile shared packages</td>
+</tr>
+<tr>
+<td><code>tsconfig.json</code></td>
+<td>TypeScript paths (<code>@/*</code>)</td>
+</tr>
+<tr>
+<td><code>tailwind.config.ts</code></td>
+<td>Brand colors (#6366f1 indigo)</td>
+</tr>
+<tr>
+<td><code>postcss.config.mjs</code></td>
+<td>Tailwind + Autoprefixer</td>
+</tr>
+<tr>
+<td><code>.env.example</code></td>
+<td>API URLs template</td>
+</tr>
+<tr>
+<td><code>.env.local</code></td>
+<td>Local env (copy from .env.example)</td>
+</tr>
+<tr>
+<td><code>middleware.ts</code></td>
+<td>Route protection (auth guard)</td>
+</tr>
+</tbody></table>
+<h4>App pages (<code>app/</code>)</h4>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>File</th>
+<th>Description</th>
+<th>Module</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/</code></td>
+<td><code>app/page.tsx</code></td>
+<td>Redirect → <code>/inbox</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>/login</code></td>
+<td><code>(auth)/login/page.tsx</code></td>
+<td>Login form</td>
+<td>Module 1</td>
+</tr>
+<tr>
+<td><code>/register</code></td>
+<td><code>(auth)/register/page.tsx</code></td>
+<td>Register + workspace</td>
+<td>Module 1</td>
+</tr>
+<tr>
+<td><code>/inbox</code></td>
+<td><code>(dashboard)/inbox/page.tsx</code></td>
+<td>3-panel inbox layout</td>
+<td>Module 3</td>
+</tr>
+<tr>
+<td><code>/tickets</code></td>
+<td><code>(dashboard)/tickets/page.tsx</code></td>
+<td>Ticket list</td>
+<td>Module 5</td>
+</tr>
+<tr>
+<td><code>/tickets/[id]</code></td>
+<td><code>tickets/[id]/page.tsx</code></td>
+<td>Ticket detail</td>
+<td>Module 5</td>
+</tr>
+<tr>
+<td><code>/customers</code></td>
+<td><code>customers/page.tsx</code></td>
+<td>Customer list</td>
+<td>Module 5</td>
+</tr>
+<tr>
+<td><code>/customers/[id]</code></td>
+<td><code>customers/[id]/page.tsx</code></td>
+<td>Customer detail</td>
+<td>Module 5</td>
+</tr>
+<tr>
+<td><code>/knowledge</code></td>
+<td><code>knowledge/page.tsx</code></td>
+<td>Knowledge articles</td>
+<td>Module 6</td>
+</tr>
+<tr>
+<td><code>/knowledge/[id]</code></td>
+<td><code>knowledge/[id]/page.tsx</code></td>
+<td>Article editor</td>
+<td>Module 6</td>
+</tr>
+<tr>
+<td><code>/settings</code></td>
+<td><code>settings/page.tsx</code></td>
+<td>Settings hub</td>
+<td>Module 2/7</td>
+</tr>
+<tr>
+<td><code>/settings/team</code></td>
+<td><code>settings/team/page.tsx</code></td>
+<td>Team invitations</td>
+<td>Module 2</td>
+</tr>
+<tr>
+<td><code>/settings/widget</code></td>
+<td><code>settings/widget/page.tsx</code></td>
+<td>Widget branding</td>
+<td>Module 7</td>
+</tr>
+<tr>
+<td><code>/settings/workspace</code></td>
+<td><code>settings/workspace/page.tsx</code></td>
+<td>Workspace config</td>
+<td>Module 2</td>
+</tr>
+</tbody></table>
+<h4>Layouts</h4>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>app/layout.tsx</code></td>
+<td>Root layout, AuthProvider</td>
+</tr>
+<tr>
+<td><code>app/(auth)/layout.tsx</code></td>
+<td>Centered auth card layout</td>
+</tr>
+<tr>
+<td><code>app/(dashboard)/layout.tsx</code></td>
+<td>Sidebar + Header shell</td>
+</tr>
+</tbody></table>
+<h4>Components</h4>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>components/layout/Sidebar.tsx</code></td>
+<td>Left nav: Inbox, Tickets, Customers, Knowledge, Settings</td>
+</tr>
+<tr>
+<td><code>components/layout/Header.tsx</code></td>
+<td>Top bar: workspace name, user, logout, theme</td>
+</tr>
+<tr>
+<td><code>components/layout/PlaceholderPage.tsx</code></td>
+<td>&quot;Coming in Module X&quot; placeholder</td>
+</tr>
+<tr>
+<td><code>components/inbox/ConversationList.tsx</code></td>
+<td>Inbox panels (Module 3 scaffold)</td>
+</tr>
+</tbody></table>
+<h4>Hooks, lib, stores</h4>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>hooks/useAuth.tsx</code></td>
+<td>Login/logout context (placeholder token)</td>
+</tr>
+<tr>
+<td><code>hooks/useSignalR.ts</code></td>
+<td>SignalR hook placeholder (Module 3)</td>
+</tr>
+<tr>
+<td><code>hooks/useConversations.ts</code></td>
+<td>Conversations data placeholder (Module 3)</td>
+</tr>
+<tr>
+<td><code>lib/api.ts</code></td>
+<td>API client instance → gateway :5000</td>
+</tr>
+<tr>
+<td><code>lib/signalr.ts</code></td>
+<td>SignalR hub URLs</td>
+</tr>
+<tr>
+<td><code>stores/inboxStore.ts</code></td>
+<td>Zustand — selected conversation ID</td>
+</tr>
+</tbody></table>
+<h3>5.4 Widget app (<code>web/apps/widget/</code>)</h3>
+<p>Vite + React — embeddable chat widget (Module 4).</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>package.json</code></td>
+<td>Vite + React dependencies</td>
+</tr>
+<tr>
+<td><code>vite.config.ts</code></td>
+<td>Library build → <code>widget.js</code></td>
+</tr>
+<tr>
+<td><code>index.html</code></td>
+<td>Dev preview page</td>
+</tr>
+<tr>
+<td><code>src/main.tsx</code></td>
+<td>Widget app entry</td>
+</tr>
+<tr>
+<td><code>src/WidgetLoader.ts</code></td>
+<td>Shadow DOM loader (Module 4)</td>
+</tr>
+<tr>
+<td><code>src/components/WidgetButton.tsx</code></td>
+<td>Floating chat launcher</td>
+</tr>
+<tr>
+<td><code>src/components/ChatWindow.tsx</code></td>
+<td>Chat window shell</td>
+</tr>
+<tr>
+<td><code>src/lib/signalr.ts</code></td>
+<td>Widget SignalR placeholder</td>
+</tr>
+</tbody></table>
+<p><strong>Port:</strong> 4173</p>
+<hr>
+<h2>Part 6 — Scripts (<code>scripts/</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>Script</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>docker-up.ps1</code></td>
+<td><code>docker compose up -d</code> + health wait</td>
+</tr>
+<tr>
+<td><code>docker-down.ps1</code></td>
+<td>Stop all containers</td>
+</tr>
+<tr>
+<td><code>redis-seed-config.ps1</code></td>
+<td>Seed JWT/DB config keys in Redis</td>
+</tr>
+<tr>
+<td><code>run-all.ps1</code></td>
+<td>Start gateway + 8 APIs in separate windows</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Part 7 — Docs (<code>docs/</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>DEVELOPER_PLAN_PHASE1.md</code></td>
+<td>Team plan, modules, milestones</td>
+</tr>
+<tr>
+<td><code>TECHNICAL_ROADMAP_PHASE1.md</code></td>
+<td>Full architecture, API spec, DB schema</td>
+</tr>
+<tr>
+<td><code>GHCR_CI_SETUP_GUIDE.md</code></td>
+<td>Docker CI/CD + GHCR workflow guide</td>
+</tr>
+<tr>
+<td><code>PROJECT_GUIDE.md</code></td>
+<td><strong>Yeh file</strong> — complete project reference</td>
+</tr>
+<tr>
+<td><code>build-dev-pdf.mjs</code></td>
+<td>Developer plan → PDF generator</td>
+</tr>
+<tr>
+<td><code>build-ghcr-guide-pdf.mjs</code></td>
+<td>GHCR guide → PDF generator</td>
+</tr>
+<tr>
+<td><code>build-project-guide-pdf.mjs</code></td>
+<td>Project guide → PDF generator</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Part 8 — Docker &amp; CI/CD</h2>
+<h3>Local Docker</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>docker-compose.yml</code></td>
+<td>Dev: Postgres + Redis + MailHog</td>
+</tr>
+<tr>
+<td><code>docker-compose.staging.yml</code></td>
+<td>Server: GHCR images + infra</td>
+</tr>
+</tbody></table>
+<h3>CI/CD</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Trigger</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>build-and-push-images.yml</code></td>
+<td>PR merge → <code>dev</code> or <code>staging</code></td>
+<td>9 images → <code>ghcr.io/merium6/supportflow/*</code></td>
+</tr>
+</tbody></table>
+<p><strong>Tags:</strong> <code>dev</code> branch → <code>:dev</code> | <code>staging</code> → <code>:staging_env1</code> + <code>:staging_env2</code></p>
+<hr>
+<h2>Part 9 — Environment variables</h2>
+<h3>Frontend (<code>web/apps/dashboard/.env.local</code>)</h3>
+<pre><code>NEXT_PUBLIC_API_BASE_URL=http://localhost:5000/api/v1
+NEXT_PUBLIC_GATEWAY_URL=http://localhost:5000
+NEXT_PUBLIC_SIGNALR_URL=http://localhost:5000
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+</code></pre>
+<h3>Widget (<code>web/apps/widget/.env</code>)</h3>
+<pre><code>VITE_API_BASE_URL=http://localhost:5000/api/v1
+VITE_SIGNALR_URL=http://localhost:5000
+</code></pre>
+<hr>
+<h2>Part 10 — Phase 1 modules map</h2>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Week</th>
+<th>Backend</th>
+<th>Frontend</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0 — Foundation</td>
+<td>Done</td>
+<td>Microservices scaffold, Docker</td>
+<td><code>web/</code> scaffold</td>
+</tr>
+<tr>
+<td>1 — Auth &amp; Shell</td>
+<td>1–2</td>
+<td>JWT, register, login</td>
+<td>Login, register, dashboard layout</td>
+</tr>
+<tr>
+<td>2 — Team</td>
+<td>3</td>
+<td>Invitations, MailHog</td>
+<td>Settings team page</td>
+</tr>
+<tr>
+<td>3 — Inbox</td>
+<td>3–4</td>
+<td>SignalR, conversations</td>
+<td>3-panel inbox UI</td>
+</tr>
+<tr>
+<td>4 — Widget</td>
+<td>5</td>
+<td>Widget public API</td>
+<td>Vite embeddable widget</td>
+</tr>
+<tr>
+<td>5 — Tickets</td>
+<td>6</td>
+<td>Ticket + customer APIs</td>
+<td>Ticket/customer pages</td>
+</tr>
+<tr>
+<td>6 — Knowledge &amp; AI</td>
+<td>7</td>
+<td>KB + AI suggest</td>
+<td>Knowledge editor, AI button</td>
+</tr>
+<tr>
+<td>7 — Release</td>
+<td>8</td>
+<td>Notifications</td>
+<td>Widget settings, polish</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Part 11 — Quick troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Frontend <code>npm install</code> fail</td>
+<td>Internet check karo, dubara <code>npm install</code></td>
+</tr>
+<tr>
+<td>Port 3000 busy</td>
+<td><code>npx kill-port 3000</code> ya alag port use karo</td>
+</tr>
+<tr>
+<td>Backend health fail</td>
+<td>Pehle <code>docker compose up -d</code>, phir <code>run-all.ps1</code></td>
+</tr>
+<tr>
+<td>Login kaam nahi</td>
+<td>Backend chalao (Identity :5010) — abhi placeholder auth hai</td>
+</tr>
+<tr>
+<td>VS Code F5 error</td>
+<td>Pehle <code>dotnet build</code> chalao</td>
+</tr>
+</tbody></table>
+<hr>
+<p><strong>Document:</strong> SupportFlow Project Guide v1.0<br><strong>Author:</strong> TechHub Development Team</p>
+</div></body></html>

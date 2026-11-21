@@ -1,5 +1,7 @@
 ## SupportFlow — Microservices (Phase 1)
 
+SupportFlow is an AI-assisted customer support platform. It brings customer conversations, support tickets, and a knowledge base into one place, and it suggests AI-generated replies to agents. The backend is eight .NET 8 microservices behind an API gateway (`src/`), and the web dashboard and chat widget live in `web/`.
+
 TechHub · AI Customer Support SaaS · .NET 8
 
 ### Architecture

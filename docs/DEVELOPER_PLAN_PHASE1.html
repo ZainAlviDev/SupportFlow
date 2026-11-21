@@ -1,0 +1,850 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"/>
+<title>Developer Plan Phase 1 | TechHub</title><style>
+  @page { size: A4; margin: 14mm 12mm; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 9.5pt; color: #1e293b; line-height: 1.5; }
+  .cover { text-align: center; padding: 70px 30px; page-break-after: always;
+    background: linear-gradient(160deg, #f8fafc, #eef2ff); min-height: 88vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .cover img { width: 90px; margin-bottom: 20px; }
+  .cover h1 { font-size: 26px; color: #0f172a; }
+  .cover .team { margin-top: 24px; font-size: 12px; }
+  .cover .team span { display: inline-block; background: #6366f1; color: #fff; padding: 6px 16px; border-radius: 20px; margin: 4px; font-weight: 600; }
+  h1 { font-size: 17px; color: #0f172a; border-bottom: 2px solid #6366f1; padding-bottom: 5px; margin: 24px 0 10px; page-break-after: avoid; }
+  h2 { font-size: 13px; color: #334155; margin: 18px 0 8px; page-break-after: avoid; }
+  h3 { font-size: 11px; margin: 12px 0 6px; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; font-size: 8.5pt; page-break-inside: avoid; }
+  th { background: #6366f1; color: #fff; padding: 5px 8px; text-align: left; }
+  td { padding: 4px 8px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  ul, ol { margin: 6px 0 10px 18px; font-size: 9pt; }
+  li { margin-bottom: 2px; }
+  pre { background: #0f172a; color: #e2e8f0; padding: 10px; border-radius: 6px; font-size: 7.5pt; white-space: pre-wrap; }
+  code { background: #f1f5f9; padding: 1px 4px; border-radius: 3px; font-size: 8pt; }
+  .content h1:first-child { display: none; }
+  strong { color: #0f172a; }
+</style></head><body>
+<div class="cover">
+  
+  <p style="color:#6366f1;font-weight:600;letter-spacing:2px;">TECHHUB</p>
+  <h1>SupportFlow — Phase 1</h1>
+  <p style="font-size:15px;font-weight:500;">Phase 1 Developer Plan</p>
+  <p style="font-size:12px;color:#475569;margin-top:8px;">Version 4.1 · July 2026</p>
+  <div class="team">
+    <span>Zain Ali</span>
+    <span>Maryam Ali</span>
+  </div>
+  <p style="margin-top:20px;font-size:10px;color:#64748b;">TechHub · Internal Document · Confidential</p>
+</div>
+<div class="content"><h1>SupportFlow — Phase 1 Developer Plan</h1>
+<p><strong>Organization:</strong> TechHub<br><strong>Product:</strong> SupportFlow — AI Customer Support SaaS Platform<br><strong>Phase:</strong> 1 (MVP)<br><strong>Version:</strong> 4.1<br><strong>Date:</strong> July 5, 2026<br><strong>Project Location:</strong> <code>C:\Projects\SupportFlow</code><br><strong>Target Delivery:</strong> 8 weeks (part-time schedule)</p>
+<hr>
+<h2>1. Overview</h2>
+<p>This document defines the Phase 1 development plan, task allocation, milestones, and delivery criteria for SupportFlow. It is intended for internal use by the development team and project stakeholders.</p>
+<p><strong>Schedule:</strong> 11 hours per week (1 hour daily, Monday–Friday, plus a 6-hour session on the weekend).</p>
+<p><strong>Team:</strong> Two full-stack developers working across backend and frontend tasks, with responsibilities divided per module.</p>
+<hr>
+<h2>2. Team &amp; Working Model</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Role</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Zain Ali</strong></td>
+<td>Full-Stack Developer</td>
+<td>Backend and frontend tasks as assigned per module</td>
+</tr>
+<tr>
+<td><strong>Maryam Ali</strong></td>
+<td>Full-Stack Developer</td>
+<td>Backend and frontend tasks as assigned per module</td>
+</tr>
+</tbody></table>
+<p>Both developers are full-stack. Tasks are split by module and feature—not by a fixed backend/frontend division. Shared work is completed during paired weekend sessions.</p>
+<h3>2.1 Version Control</h3>
+<table>
+<thead>
+<tr>
+<th>Branch</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>master</code></td>
+<td>Production-ready code</td>
+</tr>
+<tr>
+<td><code>DEV</code></td>
+<td>Integration branch</td>
+</tr>
+<tr>
+<td><code>ZainDev</code></td>
+<td>Zain&#39;s feature work</td>
+</tr>
+<tr>
+<td><code>MaryamDev</code></td>
+<td>Maryam&#39;s feature work</td>
+</tr>
+</tbody></table>
+<p>All changes merge into <code>DEV</code> via pull request with peer review before integration.</p>
+<h3>2.2 Weekly Schedule</h3>
+<table>
+<thead>
+<tr>
+<th>Period</th>
+<th>Duration</th>
+<th>Activity</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Monday–Friday</td>
+<td>1 hour/day</td>
+<td>Stand-up, planning, paired development</td>
+</tr>
+<tr>
+<td>Weekend (Sat or Sun)</td>
+<td>6 hours</td>
+<td>Deep work, integration, module demo</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>11 hours/week</strong></td>
+<td></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>3. Module 0 — Project Foundation (Complete)</h2>
+<p><strong>Completed:</strong> July 5, 2026<br><strong>Completed by:</strong> Zain Ali</p>
+<h3>3.1 Deliverables</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Item</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Git repository and project structure</td>
+<td>Complete</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Eight microservices plus YARP API Gateway</td>
+<td>Complete</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Clean Architecture per service (Domain, Application, Infrastructure, Api)</td>
+<td>Complete</td>
+</tr>
+<tr>
+<td>4</td>
+<td>MediatR and FluentValidation in Application layer</td>
+<td>Complete</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Health check endpoint on each API (<code>GET /health</code>)</td>
+<td>Complete</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Gateway routing to all services</td>
+<td>Complete</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Docker Compose: PostgreSQL, Redis, MailHog</td>
+<td>Complete</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Utility scripts: <code>docker-up</code>, <code>docker-down</code>, <code>redis-seed-config</code>, <code>run-all</code></td>
+<td>Complete</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Redis configuration seed script</td>
+<td>Complete</td>
+</tr>
+<tr>
+<td>10</td>
+<td>README and <code>.gitignore</code></td>
+<td>Complete</td>
+</tr>
+</tbody></table>
+<h3>3.2 Service Ports</h3>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Port</th>
+<th>Gateway Route</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Gateway</td>
+<td>5000</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Identity</td>
+<td>5010</td>
+<td><code>/api/v1/auth/*</code></td>
+</tr>
+<tr>
+<td>Workspace</td>
+<td>5020</td>
+<td><code>/api/v1/workspaces/*</code></td>
+</tr>
+<tr>
+<td>Conversation</td>
+<td>5030</td>
+<td><code>/api/v1/conversations/*</code>, <code>/api/v1/widget/*</code></td>
+</tr>
+<tr>
+<td>Ticket</td>
+<td>5040</td>
+<td><code>/api/v1/tickets/*</code></td>
+</tr>
+<tr>
+<td>Customer</td>
+<td>5050</td>
+<td><code>/api/v1/customers/*</code></td>
+</tr>
+<tr>
+<td>Knowledge</td>
+<td>5060</td>
+<td><code>/api/v1/knowledge/*</code></td>
+</tr>
+<tr>
+<td>AI</td>
+<td>5070</td>
+<td><code>/api/v1/ai/*</code></td>
+</tr>
+<tr>
+<td>Notification</td>
+<td>5080</td>
+<td><code>/api/v1/notifications/*</code></td>
+</tr>
+</tbody></table>
+<h3>3.3 Local Environment Setup</h3>
+<pre><code class="language-powershell">cd C:\Projects\SupportFlow
+.\scripts\docker-up.ps1
+.\scripts\redis-seed-config.ps1
+dotnet build
+.\scripts\run-all.ps1
+</code></pre>
+<p>Gateway health check: <a href="http://localhost:5000/health">http://localhost:5000/health</a></p>
+<h3>3.4 Remaining Items (Week 1)</h3>
+<ul>
+<li>Entity Framework DbContext and initial migrations</li>
+<li>Next.js dashboard scaffold (<code>web/</code>)</li>
+<li>Redis/Valkey configuration pattern (HSV reference implementation)</li>
+</ul>
+<hr>
+<h2>4. Module 1 — Authentication &amp; Dashboard Shell</h2>
+<p><strong>Timeline:</strong> Weeks 1–2<br><strong>Objective:</strong> User registration, login, workspace creation, and dashboard shell.</p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Zain Ali</th>
+<th>Maryam Ali</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Tenant, User, TenantMember entities</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>JWT authentication APIs (register, login, refresh)</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Login page and form validation</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>EF Core DbContext and initial migration</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Workspace create/read API</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Registration page with workspace setup</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Multi-tenant middleware and global query filters</td>
+<td>✓</td>
+<td>Review</td>
+</tr>
+<tr>
+<td>Dashboard layout (sidebar, header, theme toggle)</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Placeholder pages (Inbox, Tickets, Customers, Settings)</td>
+<td>Shared</td>
+<td>Shared</td>
+</tr>
+</tbody></table>
+<p><strong>Acceptance Criteria:</strong> A user can register, log in, create a workspace, and access the dashboard.</p>
+<p><strong>Demo:</strong> End of Week 2</p>
+<hr>
+<h2>5. Module 2 — Team Invitations &amp; Settings</h2>
+<p><strong>Timeline:</strong> Week 3 (first half)<br><strong>Objective:</strong> Team member invitations and basic workspace settings.</p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Zain Ali</th>
+<th>Maryam Ali</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Member invitation API and MailHog email delivery</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Settings page tab layout</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Workspace settings API (name, timezone)</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Team invitation form UI</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Settings page integration</td>
+<td>Shared</td>
+<td>Shared</td>
+</tr>
+</tbody></table>
+<p><strong>Acceptance Criteria:</strong> An invitation email is received in MailHog (<a href="http://localhost:8025">http://localhost:8025</a>).</p>
+<hr>
+<h2>6. Module 3 — Conversations &amp; Real-Time Messaging</h2>
+<p><strong>Timeline:</strong> Weeks 3–4<br><strong>Objective:</strong> Real-time agent–customer messaging via SignalR.</p>
+<p>SignalR hub implementation is assigned to <strong>Zain Ali</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Zain Ali</th>
+<th>Maryam Ali</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Customer, Conversation, Message entities</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>SignalR ConversationHub and Redis backplane</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Conversation and Message REST APIs</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>SignalR client hook (<code>useSignalR</code>)</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Three-panel inbox UI (list, thread, composer)</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>MessageBubble and composer components</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Agent assignment and status API</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Agent assignment and status UI</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Typing indicators (hub events and UI)</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+</tbody></table>
+<p><strong>Acceptance Criteria:</strong> Messages appear in real time across two browser sessions.</p>
+<p><strong>Demo:</strong> End of Week 4</p>
+<hr>
+<h2>7. Module 4 — Embeddable Chat Widget</h2>
+<p><strong>Timeline:</strong> Week 5<br><strong>Objective:</strong> Website widget connected to the agent inbox.</p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Zain Ali</th>
+<th>Maryam Ali</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Widget public API and API key authentication</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>CORS and rate limiting</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Vite widget application (launcher and chat window)</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Widget SignalR connection</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Visitor identification (localStorage)</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Widget test page</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Widget branding loaded from API</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>End-to-end widget-to-inbox integration test</td>
+<td>Shared</td>
+<td>Shared</td>
+</tr>
+</tbody></table>
+<p><strong>Acceptance Criteria:</strong> A customer message from the widget appears in the agent inbox; agent replies are delivered to the widget.</p>
+<p><strong>Demo:</strong> End of Week 5</p>
+<hr>
+<h2>8. Module 5 — Ticketing &amp; Customer Profiles</h2>
+<p><strong>Timeline:</strong> Week 6<br><strong>Objective:</strong> Support tickets and customer history.</p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Zain Ali</th>
+<th>Maryam Ali</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ticket entity and API</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Ticket list and detail pages</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Customer entity and timeline API</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Customer list and detail pages</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Ticket comments API</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Create ticket action from inbox</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Customer sidebar in inbox</td>
+<td>✓</td>
+<td></td>
+</tr>
+</tbody></table>
+<p><strong>Acceptance Criteria:</strong> A ticket can be created from a conversation; customer history is visible on the profile page.</p>
+<p><strong>Demo:</strong> End of Week 6</p>
+<hr>
+<h2>9. Module 6 — Knowledge Base &amp; AI Suggested Replies</h2>
+<p><strong>Timeline:</strong> Week 7<br><strong>Objective:</strong> Knowledge articles and AI-assisted reply suggestions.</p>
+<p>Both developers share responsibility for this module.</p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Zain Ali</th>
+<th>Maryam Ali</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>pgvector setup and article entities</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Knowledge CRUD API</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Article embedding background job (Hangfire)</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Azure OpenAI integration and suggest-reply API</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Knowledge base list page</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Tiptap article editor</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>&quot;Suggest Reply&quot; action in inbox composer</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>AI suggestion panel (accept, edit, dismiss)</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>AI-generated message indicator in thread</td>
+<td></td>
+<td>✓</td>
+</tr>
+</tbody></table>
+<p><strong>Acceptance Criteria:</strong> An uploaded article enables relevant AI reply suggestions; the agent reviews and sends the final message.</p>
+<p><strong>Demo:</strong> End of Week 7</p>
+<hr>
+<h2>10. Module 7 — Notifications, Settings &amp; Release Preparation</h2>
+<p><strong>Timeline:</strong> Week 8<br><strong>Objective:</strong> MVP completion and client demo readiness.</p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Zain Ali</th>
+<th>Maryam Ali</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Notification API and SignalR delivery</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Notification bell UI</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Widget settings API</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Widget settings page</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Workspace settings API (business hours)</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Workspace settings UI</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Tenant isolation integration tests</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>Loading, empty, and error states</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Full regression testing and bug fixes</td>
+<td>Shared</td>
+<td>Shared</td>
+</tr>
+<tr>
+<td>Client demo preparation</td>
+<td>Shared</td>
+<td>Shared</td>
+</tr>
+</tbody></table>
+<p><strong>Acceptance Criteria:</strong> All MVP acceptance criteria met; platform ready for client UAT.</p>
+<p><strong>Demo:</strong> End of Week 8</p>
+<hr>
+<h2>11. Weekly Milestone Schedule</h2>
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Focus</th>
+<th>Milestone</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Module 0 complete; Module 1 started</td>
+<td>Infrastructure running; auth and dashboard initiated</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Module 1 complete</td>
+<td>Registration, login, and dashboard functional</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Modules 2 and 3 started</td>
+<td>Team invitations; real-time messaging initiated</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Module 3 complete</td>
+<td>Inbox with live messaging operational</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Module 4 complete</td>
+<td>Widget integrated with inbox</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Module 5 complete</td>
+<td>Ticketing and customer profiles operational</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Module 6 complete</td>
+<td>Knowledge base and AI suggest-reply functional</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Module 7 complete</td>
+<td><strong>MVP release and client demo</strong></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>12. Progress Tracker</h2>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Zain Ali</th>
+<th>Maryam Ali</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0 — Project Foundation</td>
+<td>Complete</td>
+<td>—</td>
+<td><strong>Complete</strong></td>
+</tr>
+<tr>
+<td>1 — Authentication &amp; Dashboard</td>
+<td>Pending</td>
+<td>Pending</td>
+<td>In Progress</td>
+</tr>
+<tr>
+<td>2 — Team Invitations</td>
+<td>Pending</td>
+<td>Pending</td>
+<td>Not Started</td>
+</tr>
+<tr>
+<td>3 — Conversations &amp; SignalR</td>
+<td>Pending</td>
+<td>Pending</td>
+<td>Not Started</td>
+</tr>
+<tr>
+<td>4 — Chat Widget</td>
+<td>Pending</td>
+<td>Pending</td>
+<td>Not Started</td>
+</tr>
+<tr>
+<td>5 — Ticketing &amp; Customers</td>
+<td>Pending</td>
+<td>Pending</td>
+<td>Not Started</td>
+</tr>
+<tr>
+<td>6 — Knowledge Base &amp; AI</td>
+<td>Pending</td>
+<td>Pending</td>
+<td>Not Started</td>
+</tr>
+<tr>
+<td>7 — Release Preparation</td>
+<td>Pending</td>
+<td>Pending</td>
+<td>Not Started</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>13. MVP Scope</h2>
+<h3>In Scope</h3>
+<ul>
+<li>User registration, login, and workspace management</li>
+<li>Team member invitations</li>
+<li>Embeddable chat widget</li>
+<li>Real-time agent inbox</li>
+<li>Conversation assignment and status management</li>
+<li>Ticketing and customer profiles</li>
+<li>Knowledge base with AI-suggested replies</li>
+<li>Widget and workspace settings</li>
+<li>Tenant data isolation</li>
+</ul>
+<h3>Out of Scope (Phase 1 — defer if schedule constrained)</h3>
+<ul>
+<li>Command palette (Cmd+K)</li>
+<li>File attachments in chat</li>
+<li>Email notifications (in-app notifications only)</li>
+<li>Password reset flow</li>
+<li>End-to-end automated testing (Playwright)</li>
+<li>Azure production deployment</li>
+</ul>
+<hr>
+<h2>14. Client Demo Script (Week 8)</h2>
+<ol>
+<li>Register a business account and create workspace &quot;Acme Corp&quot;</li>
+<li>Invite an agent; confirm email in MailHog</li>
+<li>Send a customer message via the embedded widget</li>
+<li>Reply from the agent inbox in real time</li>
+<li>Assign and resolve a conversation</li>
+<li>Create a ticket from an existing conversation</li>
+<li>Upload a knowledge base article (&quot;Return Policy&quot;)</li>
+<li>Demonstrate AI suggest-reply for a customer inquiry</li>
+<li>Review customer profile and conversation history</li>
+<li>Update widget branding settings</li>
+</ol>
+<hr>
+<h2>15. Local Environment Reference</h2>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>URL / Connection</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>API Gateway</td>
+<td><a href="http://localhost:5000/health">http://localhost:5000/health</a></td>
+</tr>
+<tr>
+<td>Identity Service</td>
+<td><a href="http://localhost:5010/health">http://localhost:5010/health</a></td>
+</tr>
+<tr>
+<td>PostgreSQL</td>
+<td><code>localhost:5432</code> — database: <code>supportflow</code>, user: <code>postgres</code></td>
+</tr>
+<tr>
+<td>Redis</td>
+<td><code>localhost:6379</code></td>
+</tr>
+<tr>
+<td>MailHog</td>
+<td><a href="http://localhost:8025">http://localhost:8025</a></td>
+</tr>
+<tr>
+<td>Dashboard</td>
+<td><a href="http://localhost:3000">http://localhost:3000</a> (available after Module 1)</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>16. Related Documentation</h2>
+<ul>
+<li>Technical specification: <code>docs/TECHNICAL_ROADMAP_PHASE1.md</code></li>
+<li>Client proposal: <code>docs/CUSTOMER_PROPOSAL.pdf</code></li>
+</ul>
+<hr>
+<p><strong>Document Control</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Author</td>
+<td>TechHub Development Team</td>
+</tr>
+<tr>
+<td>Version</td>
+<td>4.1</td>
+</tr>
+<tr>
+<td>Classification</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td>Last Updated</td>
+<td>July 5, 2026</td>
+</tr>
+</tbody></table>
+<hr>
+<p><em>© 2026 TechHub. All rights reserved. Internal use only.</em></p>
+</div></body></html>

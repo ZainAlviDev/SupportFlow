@@ -1,0 +1,438 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"/>
+<title>SupportFlow GHCR CI/CD Setup Guide</title><style>
+  @page { size: A4; margin: 14mm 12mm; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 9.5pt; color: #1e293b; line-height: 1.5; }
+  .cover { text-align: center; padding: 70px 30px; page-break-after: always;
+    background: linear-gradient(160deg, #f0fdf4, #ecfdf5); min-height: 88vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .cover h1 { font-size: 24px; color: #0f172a; margin: 12px 0; }
+  .cover .badge { display: inline-block; background: #059669; color: #fff; padding: 6px 18px;
+    border-radius: 20px; font-weight: 600; font-size: 11px; margin: 4px; }
+  h1 { font-size: 16px; color: #0f172a; border-bottom: 2px solid #059669; padding-bottom: 5px;
+    margin: 22px 0 10px; page-break-after: avoid; }
+  h2 { font-size: 12.5px; color: #334155; margin: 16px 0 7px; page-break-after: avoid; }
+  h3 { font-size: 10.5px; margin: 10px 0 5px; color: #475569; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 8pt; page-break-inside: avoid; }
+  th { background: #059669; color: #fff; padding: 5px 8px; text-align: left; }
+  td { padding: 4px 8px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  ul, ol { margin: 6px 0 10px 18px; font-size: 8.5pt; }
+  li { margin-bottom: 3px; }
+  pre { background: #0f172a; color: #e2e8f0; padding: 10px; border-radius: 6px;
+    font-size: 7.5pt; white-space: pre-wrap; page-break-inside: avoid; }
+  code { background: #f1f5f9; padding: 1px 4px; border-radius: 3px; font-size: 7.5pt; }
+  .content h1:first-child { display: none; }
+  strong { color: #0f172a; }
+  hr { border: none; border-top: 1px solid #e2e8f0; margin: 16px 0; }
+</style></head><body>
+<div class="cover">
+  <p style="color:#059669;font-weight:600;letter-spacing:2px;">TECHHUB · SUPPORTFLOW</p>
+  <h1>Docker & GHCR CI/CD<br/>Setup Guide</h1>
+  <p style="font-size:13px;color:#475569;margin-top:8px;">GitHub Actions · Container Registry · Deploy Flow</p>
+  <p style="font-size:11px;color:#64748b;margin-top:6px;">Version 1.0 · July 2026</p>
+  <div style="margin-top:24px;">
+    <span class="badge">Manual Run</span>
+    <span class="badge">PR Merge Trigger</span>
+    <span class="badge">9 Microservices</span>
+  </div>
+  <p style="margin-top:24px;font-size:10px;color:#64748b;">github.com/merium6/SupportFlow</p>
+</div>
+<div class="content"><h1>SupportFlow — Docker &amp; GHCR CI/CD Setup Guide</h1>
+<p><strong>Repository:</strong> <code>https://github.com/merium6/SupportFlow</code><br><strong>Version:</strong> 1.0 · July 2026<br><strong>Team:</strong> TechHub · Zain Ali · Maryam Ali</p>
+<hr>
+<h2>1. Overview (Yeh system kya karta hai?)</h2>
+<p>SupportFlow ke <strong>9 microservices</strong> (1 Gateway + 8 APIs) ke Docker images automatically build hote hain aur <strong>GitHub Container Registry (GHCR)</strong> par push hote hain.</p>
+<p><strong>Registry path format:</strong></p>
+<pre><code>ghcr.io/merium6/supportflow/&lt;service-name&gt;:&lt;tag&gt;
+</code></pre>
+<p><strong>Example:</strong></p>
+<pre><code>ghcr.io/merium6/supportflow/gateway:dev
+ghcr.io/merium6/supportflow/identity:staging_env1
+</code></pre>
+<p><strong>Kab chalta hai:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Workflow chalega?</th>
+<th>Image tag</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PR merge INTO <code>dev</code></td>
+<td>✅ Haan</td>
+<td><code>:dev</code></td>
+</tr>
+<tr>
+<td>PR merge INTO <code>staging</code></td>
+<td>✅ Haan</td>
+<td><code>:staging_env1</code> + <code>:staging_env2</code></td>
+</tr>
+<tr>
+<td>PR merge INTO <code>master</code></td>
+<td>❌ Nahi</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Direct push (bina PR)</td>
+<td>❌ Nahi</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Manual run (Actions tab)</td>
+<td>✅ Haan</td>
+<td>branch ke hisaab se</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>2. Branch Flow (Kaun si branch kahan jati hai)</h2>
+<pre><code>Zain_Dev / Maryam_Dev  (feature branches)
+         │
+         │  Pull Request + Merge
+         ▼
+        dev              → Docker images :dev tag
+         │
+         │  Pull Request + Merge
+         ▼
+      staging            → Docker images :staging_env1 + :staging_env2
+</code></pre>
+<p><strong>Note:</strong> <code>master</code> branch ab CI/CD se linked nahi hai. Default branch GitHub par <strong><code>dev</code></strong> honi chahiye.</p>
+<hr>
+<h2>3. Kaun si files bani hain? (File list + description)</h2>
+<h3>3.1 Dockerfiles (repo root par — 9 files)</h3>
+<p>Har file ek service ka Docker image banati hai (.NET 8, port 8080).</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Service</th>
+<th>GHCR image name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>GatewayDockerfile</code></td>
+<td>YARP API Gateway</td>
+<td><code>gateway</code></td>
+</tr>
+<tr>
+<td><code>IdentityDockerfile</code></td>
+<td>Auth / JWT</td>
+<td><code>identity</code></td>
+</tr>
+<tr>
+<td><code>WorkspaceDockerfile</code></td>
+<td>Workspaces</td>
+<td><code>workspace</code></td>
+</tr>
+<tr>
+<td><code>ConversationDockerfile</code></td>
+<td>Chat / widget</td>
+<td><code>conversation</code></td>
+</tr>
+<tr>
+<td><code>TicketDockerfile</code></td>
+<td>Support tickets</td>
+<td><code>ticket</code></td>
+</tr>
+<tr>
+<td><code>CustomerDockerfile</code></td>
+<td>Customers</td>
+<td><code>customer</code></td>
+</tr>
+<tr>
+<td><code>KnowledgeDockerfile</code></td>
+<td>Knowledge base</td>
+<td><code>knowledge</code></td>
+</tr>
+<tr>
+<td><code>AIDockerfile</code></td>
+<td>AI features</td>
+<td><code>ai</code></td>
+</tr>
+<tr>
+<td><code>NotificationDockerfile</code></td>
+<td>Notifications</td>
+<td><code>notification</code></td>
+</tr>
+</tbody></table>
+<p><strong>Local test (ek service):</strong></p>
+<pre><code class="language-powershell">cd C:\Projects\SupportFlow
+docker build -f GatewayDockerfile -t supportflow-gateway:local .
+</code></pre>
+<hr>
+<h3>3.2 <code>.dockerignore</code></h3>
+<p>Docker build ke waqt unnecessary files skip karta hai (<code>bin/</code>, <code>obj/</code>, <code>.git</code>, <code>node_modules</code>). Build <strong>faster</strong> aur image <strong>chhoti</strong> rehti hai.</p>
+<hr>
+<h3>3.3 <code>.github/workflows/build-and-push-images.yml</code></h3>
+<p><strong>Main CI/CD workflow file.</strong> GitHub Actions is file ko padhta hai aur automatically:</p>
+<ol>
+<li>Branch detect karta hai</li>
+<li>Code checkout karta hai</li>
+<li>Image tags set karta hai</li>
+<li>GHCR par login karta hai</li>
+<li>Har service ke liye <code>docker build</code> + <code>docker push</code> karta hai (9 parallel jobs)</li>
+</ol>
+<hr>
+<h3>3.4 <code>CONFIG.md</code></h3>
+<p>GitHub admin ke liye short setup checklist — permissions, GHCR packages, placeholders.</p>
+<hr>
+<h3>3.5 <code>docker-compose.staging.yml</code></h3>
+<p>Staging server par <strong>GHCR se images pull</strong> karke saari services + Postgres/Redis/MailHog ek saath chalane ke liye.</p>
+<pre><code class="language-powershell">$env:GITHUB_ORG = &quot;merium6&quot;
+$env:IMAGE_TAG = &quot;staging_env1&quot;
+docker compose -f docker-compose.staging.yml pull
+docker compose -f docker-compose.staging.yml up -d
+</code></pre>
+<hr>
+<h3>3.6 <code>docker-compose.yml</code> (pehle se tha)</h3>
+<p>Sirf <strong>local infrastructure</strong>: PostgreSQL, Redis, MailHog. App containers is mein nahi hain.</p>
+<hr>
+<h2>4. GitHub Setup (Pehli baar — ek dafa karna hai)</h2>
+<h3>Step 4.1 — Actions permissions</h3>
+<ol>
+<li>Repo kholo: <code>github.com/merium6/SupportFlow</code></li>
+<li><strong>Settings → Actions → General</strong></li>
+<li><strong>Workflow permissions</strong> → <strong>Read and write permissions</strong> select karo</li>
+<li><strong>Save</strong></li>
+</ol>
+<blockquote>
+<p>Bina iske GHCR par push fail hoga (403 error).</p>
+</blockquote>
+<hr>
+<h3>Step 4.2 — Default branch <code>dev</code> banao</h3>
+<ol>
+<li><strong>Settings → General → Default branch</strong></li>
+<li><strong><code>dev</code></strong> select karo → <strong>Update</strong></li>
+<li>Confirm karo</li>
+</ol>
+<blockquote>
+<p>Is se Actions tab mein workflow dikhega. <code>master</code> par merge ki zaroorat nahi.</p>
+</blockquote>
+<hr>
+<h3>Step 4.3 — Branches confirm karo</h3>
+<p>Ye branches honi chahiye:</p>
+<table>
+<thead>
+<tr>
+<th>Branch</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>dev</code></td>
+<td>Integration — yahan PR merge par <code>:dev</code> images</td>
+</tr>
+<tr>
+<td><code>staging</code></td>
+<td>QA — yahan PR merge par staging tags</td>
+</tr>
+<tr>
+<td><code>Zain_Dev</code> / <code>Maryam_Dev</code></td>
+<td>Feature work</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>Step 4.4 — GHCR packages (pehli successful run ke baad)</h3>
+<ol>
+<li>GitHub → <strong>Packages</strong></li>
+<li>Har package kholo (e.g. <code>supportflow/gateway</code>)</li>
+<li><strong>Package settings → Connect repository</strong> → SupportFlow link karo</li>
+<li>Visibility set karo (Private recommended)</li>
+</ol>
+<hr>
+<h2>5. Workflow andar se kaise chalta hai? (Step-by-step)</h2>
+<p>Jab PR merge hota hai ya manual run karte ho:</p>
+<pre><code>Step 1: Detect branch
+        → PR merge: base branch (dev ya staging)
+        → Manual: aapki select ki hui branch
+
+Step 2: Checkout code
+        → Us branch ka latest code download
+
+Step 3: Set image tags
+        → dev branch     → tag &quot;dev&quot;
+        → staging branch → tag &quot;staging_env1&quot; + alias &quot;staging_env2&quot;
+
+Step 4: Login to GHCR
+        → GITHUB_TOKEN use hota hai (automatic)
+
+Step 5: Build + Push (9 jobs parallel)
+        → gateway, identity, workspace, conversation,
+          ticket, customer, knowledge, ai, notification
+</code></pre>
+<p><strong>Matrix jobs:</strong> Ek workflow run mein <strong>9 alag jobs</strong> chalti hain — har service ke liye alag. Agar ek fail ho to baaki phir bhi chalti hain (<code>fail-fast: false</code>).</p>
+<hr>
+<h2>6. Manual run kaise karein? (Actions tab se)</h2>
+<p>Jab test karna ho bina PR merge ke:</p>
+<ol>
+<li>Browser mein jao: <code>github.com/merium6/SupportFlow</code></li>
+<li><strong>Actions</strong> tab click karo</li>
+<li>Left sidebar mein <strong>&quot;Build and Push Images&quot;</strong> select karo</li>
+<li>Right side <strong>&quot;Run workflow&quot;</strong> button (dropdown)</li>
+<li><strong>Branch to build from:</strong> <code>dev</code> select karo (ya koi aur branch)</li>
+<li><strong>Run workflow</strong> green button dabao</li>
+<li>Neeche run list mein naya run dikhega — click karke 9 jobs dekho</li>
+<li>Har job green ✅ honi chahiye</li>
+</ol>
+<p><strong>Expected time:</strong> 10–20 minutes (9 services × Docker build)</p>
+<p><strong>Success ke baad check karo:</strong></p>
+<ul>
+<li>GitHub → <strong>Packages</strong> → <code>supportflow/gateway</code> etc. dikhna chahiye</li>
+<li>Tag <code>:dev</code> (ya jo branch select ki thi)</li>
+</ul>
+<hr>
+<h2>7. PR merge par automatic run kaise hota hai?</h2>
+<h3>Example A — Feature → dev</h3>
+<ol>
+<li><code>Zain_Dev</code> par kaam karo, commit + push karo</li>
+<li>GitHub → <strong>Pull requests → New pull request</strong></li>
+<li><strong>Base: <code>dev</code></strong> ← <strong>Compare: <code>Zain_Dev</code></strong></li>
+<li>PR create karo, review karo</li>
+<li><strong>Merge pull request</strong> dabao</li>
+<li>Automatically <strong>Actions</strong> tab mein naya run start hoga</li>
+<li>Images push hongi: <code>ghcr.io/merium6/supportflow/*:dev</code></li>
+</ol>
+<h3>Example B — dev → staging</h3>
+<ol>
+<li><strong>Pull requests → New</strong></li>
+<li><strong>Base: <code>staging</code></strong> ← <strong>Compare: <code>dev</code></strong></li>
+<li>Merge karo</li>
+<li>Workflow chalega — tags: <code>:staging_env1</code> aur <code>:staging_env2</code></li>
+</ol>
+<h3>Kya trigger NAHI karta?</h3>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>dev</code> → <code>master</code> PR merge</td>
+<td>❌ Workflow nahi chalega</td>
+</tr>
+<tr>
+<td>PR close bina merge</td>
+<td>❌ Nahi chalega</td>
+</tr>
+<tr>
+<td>Direct push to <code>dev</code></td>
+<td>❌ Nahi chalega (PR merge chahiye)</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>8. Staging server par deploy</h2>
+<p>Jab staging images ready hon:</p>
+<pre><code class="language-powershell"># Server par
+export GITHUB_ORG=merium6
+export IMAGE_TAG=staging_env1
+
+docker compose -f docker-compose.staging.yml pull
+docker compose -f docker-compose.staging.yml up -d
+</code></pre>
+<p><strong>Gateway URL:</strong> <code>http://&lt;server-ip&gt;:5000/health</code></p>
+<hr>
+<h2>9. Local development (Docker ke saath)</h2>
+<h3>Sirf infrastructure (Postgres, Redis, MailHog):</h3>
+<pre><code class="language-powershell">cd C:\Projects\SupportFlow
+.\scripts\docker-up.ps1
+.\scripts\redis-seed-config.ps1
+</code></pre>
+<h3>.NET services (containers ke bina):</h3>
+<pre><code class="language-powershell">dotnet build
+.\scripts\run-all.ps1
+</code></pre>
+<h3>Ek service container mein test:</h3>
+<pre><code class="language-powershell">docker build -f GatewayDockerfile -t supportflow-gateway:local .
+docker run -p 5000:8080 supportflow-gateway:local
+</code></pre>
+<hr>
+<h2>10. Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Actions tab khali / &quot;Get started&quot;</td>
+<td>Default branch <code>dev</code> banao; workflow <code>dev</code> par hona chahiye</td>
+</tr>
+<tr>
+<td>403 push to GHCR</td>
+<td>Settings → Actions → Read and write permissions enable karo</td>
+</tr>
+<tr>
+<td>Workflow skip ho gaya</td>
+<td>PR sirf close hua? Merge hona chahiye. Base branch <code>dev</code> ya <code>staging</code> honi chahiye</td>
+</tr>
+<tr>
+<td>dev→master merge par run nahi</td>
+<td>Expected — sirf dev/staging par trigger hota hai</td>
+</tr>
+<tr>
+<td>Package nahi dikh raha</td>
+<td>Pehli successful run ke baad Packages tab check karo</td>
+</tr>
+<tr>
+<td>Docker build fail (.NET)</td>
+<td><code>dotnet build</code> locally chalao — compile errors fix karo</td>
+</tr>
+<tr>
+<td>Branch name case</td>
+<td><code>dev</code> ≠ <code>Dev</code> — lowercase use karo</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>11. Repo values (replace if needed)</h2>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Current value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GitHub Org</td>
+<td><code>merium6</code></td>
+</tr>
+<tr>
+<td>Image repo name</td>
+<td><code>supportflow</code></td>
+</tr>
+<tr>
+<td>Registry</td>
+<td><code>ghcr.io</code></td>
+</tr>
+<tr>
+<td>Trigger branches</td>
+<td><code>dev</code>, <code>staging</code></td>
+</tr>
+<tr>
+<td>Staging tags</td>
+<td><code>staging_env1</code>, <code>staging_env2</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>12. Quick checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Actions Read and write permissions enabled</li>
+<li><input disabled="" type="checkbox"> Default branch = <code>dev</code></li>
+<li><input disabled="" type="checkbox"> Workflow file on <code>dev</code> and <code>staging</code> branches</li>
+<li><input disabled="" type="checkbox"> Manual workflow run successful (test)</li>
+<li><input disabled="" type="checkbox"> PR merge to <code>dev</code> triggers workflow</li>
+<li><input disabled="" type="checkbox"> GHCR packages linked to repo</li>
+<li><input disabled="" type="checkbox"> Staging deploy tested with <code>docker-compose.staging.yml</code></li>
+</ul>
+<hr>
+<h2>13. Future — Worker add karna</h2>
+<p>Jab <code>SupportFlow.Worker</code> project banega:</p>
+<ol>
+<li><code>WorkerDockerfile</code> create karo</li>
+<li>Workflow matrix mein <code>worker</code> entry add karo</li>
+<li><code>docker-compose.staging.yml</code> mein worker service add karo</li>
+</ol>
+<hr>
+<p><strong>Document:</strong> SupportFlow GHCR CI/CD Setup Guide v1.0<br><strong>Author:</strong> TechHub Development Team<br><strong>Last updated:</strong> July 2026</p>
+</div></body></html>
